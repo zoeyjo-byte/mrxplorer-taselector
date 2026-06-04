@@ -569,6 +569,276 @@ textarea.text-input { resize: vertical; min-height: 90px; }
 .logo-mark svg { width: 18px; height: 18px; fill: white; }
 .logo-text { font-family: 'Fraunces', serif; font-size: 1rem; color: white; }
 .logo-text span { color: var(--orange); }
+
+/* ── LOADING STATE ── */
+.loading-screen {
+  padding: 60px 44px;
+  text-align: center;
+}
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin: 0 auto 28px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-lines { min-height: 28px; }
+.loading-line {
+  font-size: .95rem;
+  color: var(--gray-mid);
+  animation: fadeUp 0.4s ease both;
+  font-weight: 300;
+}
+.loading-line strong { color: var(--navy); font-weight: 600; }
+
+/* ── VERDICT CARDS ── */
+.verdicts-wrap { padding: 40px 44px; }
+@media (max-width: 600px) { .verdicts-wrap { padding: 28px 24px; } }
+
+.transparency-note {
+  background: var(--gray-lt);
+  border-left: 3px solid var(--gray-mid);
+  border-radius: var(--radius);
+  padding: 13px 18px;
+  font-size: .82rem;
+  color: var(--gray-mid);
+  margin-bottom: 32px;
+  line-height: 1.55;
+}
+.transparency-note strong { color: var(--gray-dk); }
+
+.verdict-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(3,44,100,.06);
+}
+.verdict-head {
+  padding: 18px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.verdict-wf-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 3px;
+}
+.verdict-wf-type {
+  font-size: .75rem;
+  color: var(--gray-mid);
+}
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tier-day1    { background: var(--green-lt);  color: var(--green);  border: 1px solid rgba(14,127,90,.25); }
+.tier-plan    { background: var(--navy-light); color: var(--navy);   border: 1px solid rgba(3,44,100,.2); }
+.tier-staged  { background: var(--amber-lt);  color: var(--amber);  border: 1px solid rgba(180,83,9,.25); }
+.tier-notyet  { background: var(--red-lt);    color: var(--red);    border: 1px solid rgba(190,18,60,.2); }
+
+.verdict-body { padding: 20px 22px; }
+.verdict-tier-reason {
+  font-size: .88rem;
+  color: var(--gray-dk);
+  margin-bottom: 16px;
+  font-style: italic;
+  line-height: 1.55;
+}
+.verdict-observations { margin-bottom: 18px; }
+.verdict-obs-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--gray-mid);
+  margin-bottom: 8px;
+}
+.verdict-obs-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: .87rem;
+  line-height: 1.5;
+  color: var(--gray-dk);
+}
+.verdict-obs-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.verdict-before-call {
+  background: var(--orange-lt);
+  border: 1px solid rgba(244,119,33,.25);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.verdict-before-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--orange-dk);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.verdict-before-text {
+  font-size: .87rem;
+  color: var(--gray-dk);
+  line-height: 1.55;
+}
+
+.verdict-summary {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 24px 26px;
+  margin-top: 8px;
+  margin-bottom: 32px;
+}
+.verdict-summary-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 10px;
+}
+.verdict-summary-text {
+  font-size: .93rem;
+  color: rgba(255,255,255,.9);
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+.verdict-error {
+  background: var(--red-lt);
+  border: 1px solid rgba(190,18,60,.2);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  font-size: .88rem;
+  color: var(--red);
+  margin-bottom: 24px;
+}
+
+.verdict-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+
+/* ── SUBMISSION FORM ── */
+.submit-wrap {
+  border-top: 1px solid var(--border);
+  margin-top: 32px;
+  padding-top: 28px;
+}
+.submit-wrap h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.submit-wrap p {
+  font-size: .85rem;
+  color: var(--gray-mid);
+  margin-bottom: 20px;
+  line-height: 1.55;
+}
+.submit-fields {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.submit-fields input {
+  flex: 1;
+  min-width: 180px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .88rem;
+  color: var(--gray-dk);
+  outline: none;
+  transition: var(--transition);
+}
+.submit-fields input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(3,44,100,.07); }
+.submit-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.submit-note {
+  font-size: .75rem;
+  color: var(--gray-mid);
+  margin-top: 10px;
+}
+.submit-error {
+  font-size: .82rem;
+  color: var(--red);
+  margin-top: 8px;
+  display: none;
+}
+
+/* ── CONFIRMATION SCREEN ── */
+.confirm-body {
+  padding: 48px 44px;
+  text-align: center;
+}
+@media (max-width: 600px) { .confirm-body { padding: 32px 24px; } }
+.confirm-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--green-lt);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  margin: 0 auto 24px;
+}
+.confirm-body h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.confirm-body p {
+  font-size: .9rem;
+  color: var(--gray-mid);
+  max-width: 420px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 </style>
 </head>
 <body>
@@ -726,7 +996,44 @@ textarea.text-input { resize: vertical; min-height: 90px; }
           The next step generates your personalized workflow verdict — plain-language readiness assessments for each workflow you entered, plus a consultation prep summary.
         </p>
         <div style="text-align:center">
-          <button class="btn btn-orange" onclick="alert('Verdict card generation coming in the next build stage!')">Generate My Verdict Cards →</button>
+          <button class="btn btn-orange" onclick="generateVerdicts()">Generate My Verdict Cards →</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══ LOADING ══ -->
+    <div class="screen" id="screen-loading">
+      <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-lines">
+          <div class="loading-line" id="loadingLine">Sending your answers to the MRXplorer diagnostic...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VERDICTS ══ -->
+    <div class="screen" id="screen-verdicts">
+      <div class="verdicts-wrap" id="verdictsWrap">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+
+    <!-- ══ CONFIRMATION ══ -->
+    <div class="screen" id="screen-confirm">
+      <div class="card-head" style="background: linear-gradient(135deg, #0e7f5a 0%, #065f46 100%);">
+        <div class="eyebrow" style="color:#6ee7b7">You're all set</div>
+        <h2>Your diagnostic has been sent to Z.</h2>
+        <p>She'll be in touch to schedule your free training consultation.</p>
+      </div>
+      <div class="confirm-body">
+        <div class="confirm-icon">✓</div>
+        <h3>What happens next</h3>
+        <p>Z will review your verdict cards before your call so you can skip discovery and get straight into the work. In the meantime, save a PDF copy of your results.</p>
+        <div class="confirm-actions">
+          <a href="https://mrxplorer.com" target="_blank" class="btn btn-orange">Book Your Consultation →</a>
+          <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
         </div>
       </div>
     </div>
@@ -738,10 +1045,16 @@ textarea.text-input { resize: vertical; min-height: 90px; }
 // ══════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════
+// ── WORKER URL — replace with your deployed Worker URL after deployment ──
+const WORKER_URL = 'https://mrxplorer-diagnostic.zjohnson-344.workers.dev';
+
+// Generate anonymous session ID
+const SESSION_ID = 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
 const state = {
-  currentWorkflow: 1,      // 1, 2, or 3
-  workflows: [],           // array of completed workflow objects
-  currentBranch: null,     // 'existing' | 'wishlist'
+  currentWorkflow: 1,
+  workflows: [],
+  currentBranch: null,
   currentWfName: '',
   currentScreen: 'welcome',
   existingStep: 0,
@@ -750,8 +1063,31 @@ const state = {
   existingAnswers: {},
   wishlistAnswers: {},
   aiAnswers: {},
-  history: [],             // screen history for back navigation
+  history: [],
+  verdictData: null,       // stores parsed verdict response
 };
+
+// ── SESSION LOGGING (fire and forget) ────────────────────────
+function logSession(lastQuestion) {
+  if (WORKER_URL.includes('YOUR_WORKER')) return; // skip until deployed
+  const payload = {
+    sessionId: SESSION_ID,
+    currentScreen: state.currentScreen,
+    workflowCount: state.workflows.length,
+    lastQuestion: lastQuestion || '',
+    partialAnswers: {
+      workflows: state.workflows,
+      existingAnswers: state.existingAnswers,
+      wishlistAnswers: state.wishlistAnswers,
+      aiAnswers: state.aiAnswers,
+    },
+  };
+  fetch(WORKER_URL + '/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {}); // silent fail — never block the user
+}
 
 // ══════════════════════════════════════════════════════
 // QUESTION DEFINITIONS
@@ -774,7 +1110,7 @@ const EXISTING_QUESTIONS = [
   {
     id: 'volume',
     label: 'When it happens, roughly how many items are you processing?',
-    sub: 'Items = transcripts, rows, slides, reports — whatever the unit is for this workflow.',
+    sub: () => getVolumeSubCopy(state.existingAnswers['work_type'] || []),
     type: 'single',
     options: [
       { value: 'under25', label: 'Under 25' },
@@ -791,9 +1127,14 @@ const EXISTING_QUESTIONS = [
     options: [
       { value: 'structured', label: 'Structured data', note: 'Crosstabs, spreadsheets, databases' },
       { value: 'unstructured', label: 'Unstructured text', note: 'Open-ends, transcripts, reports, emails' },
+      { value: 'existing_content', label: 'Existing written content', note: 'Past proposals, case studies, articles, website copy' },
+      { value: 'company_info', label: 'Company or organizational information', note: 'Credentials, bios, service descriptions, past work samples' },
+      { value: 'client_info', label: 'Client or prospect information', note: 'RFPs, briefs, LinkedIn profiles, websites' },
       { value: 'av', label: 'Audio or video recordings' },
       { value: 'visual', label: 'Visual materials', note: 'Slides, images, stimulus' },
       { value: 'briefs', label: 'Client briefs or specs that vary every time' },
+      { value: 'internal_docs', label: 'Internal business documents', note: 'Meeting notes, financials, CRM data, email threads' },
+      { value: 'ideas_notes', label: 'Raw ideas or notes', note: 'Rough thinking that needs shaping into a deliverable' },
       { value: 'scratch', label: 'Something we build from scratch each time' },
     ]
   },
@@ -822,6 +1163,9 @@ const EXISTING_QUESTIONS = [
       { value: 'generating', label: 'Generating something new from it', note: 'Slides, reports, charts' },
       { value: 'patterns', label: 'Finding patterns across a large volume of it' },
       { value: 'comparing', label: 'Comparing it against a standard or benchmark' },
+      { value: 'marketing_content', label: 'Creating marketing or social content', note: 'Blog posts, LinkedIn, newsletters, case studies' },
+      { value: 'concepts', label: 'Generating concepts, stimuli, or ideas for testing', note: 'Ad concepts, product concepts, creative territories' },
+      { value: 'admin', label: 'Business administrative tasks', note: 'Bookkeeping, meeting notes, follow-ups, scheduling' },
     ]
   },
   {
@@ -857,7 +1201,7 @@ const EXISTING_QUESTIONS = [
   },
   {
     id: 'data_sensitivity',
-    label: 'Who is in this data?',
+    label: 'What is in this data?',
     sub: "Be honest — this shapes what environments are safe to use.",
     type: 'single',
     options: [
@@ -931,9 +1275,14 @@ const WISHLIST_QUESTIONS = [
     options: [
       { value: 'structured', label: 'Structured data', note: 'Crosstabs, spreadsheets, databases' },
       { value: 'unstructured', label: 'Unstructured text', note: 'Open-ends, transcripts, reports, emails' },
+      { value: 'existing_content', label: 'Existing written content', note: 'Past proposals, case studies, articles, website copy' },
+      { value: 'company_info', label: 'Company or organizational information', note: 'Credentials, bios, service descriptions, past work samples' },
+      { value: 'client_info', label: 'Client or prospect information', note: 'RFPs, briefs, LinkedIn profiles, websites' },
       { value: 'av', label: 'Audio or video recordings' },
       { value: 'visual', label: 'Visual materials', note: 'Slides, images, stimulus' },
       { value: 'briefs', label: 'Client briefs or specs' },
+      { value: 'internal_docs', label: 'Internal business documents', note: 'Meeting notes, financials, CRM data, email threads' },
+      { value: 'ideas_notes', label: 'Raw ideas or notes', note: 'Rough thinking that needs shaping into a deliverable' },
       { value: 'scratch', label: "We'd need to create the inputs from scratch" },
     ]
   },
@@ -942,7 +1291,8 @@ const WISHLIST_QUESTIONS = [
     label: 'Does that input exist already, or would you need to create it?',
     type: 'single',
     options: [
-      { value: 'exists', label: 'It exists — we just don\'t process it', flag: { type: 'good', text: "The input already exists — that's a meaningful head start. This is closer to reality than you might think." } },
+      { value: 'exists', label: 'It exists — we just don\'t process it yet', flag: { type: 'good', text: "The input already exists — that's a meaningful head start. This is closer to reality than you might think." } },
+      { value: 'partial', label: 'Some exists, some would need to be created', note: 'e.g. we have past proposals but would need to build a template or brief', flag: { type: 'good', text: "A partial foundation is still a foundation. We can work with what exists and design the creation process for what doesn't." } },
       { value: 'create', label: "We'd need to create or collect it first" },
       { value: 'unsure', label: "Not sure yet" },
     ]
@@ -961,6 +1311,9 @@ const WISHLIST_QUESTIONS = [
       { value: 'generating', label: 'Generating something new', note: 'Slides, reports, templates, libraries' },
       { value: 'patterns', label: 'Finding patterns across volume' },
       { value: 'comparing', label: 'Comparing against a standard or benchmark' },
+      { value: 'marketing_content', label: 'Creating marketing or social content', note: 'Blog posts, LinkedIn, newsletters, case studies' },
+      { value: 'concepts', label: 'Generating concepts, stimuli, or ideas for testing', note: 'Ad concepts, product concepts, creative territories' },
+      { value: 'admin', label: 'Business administrative tasks', note: 'Bookkeeping, meeting notes, follow-ups, scheduling' },
     ]
   },
   {
@@ -985,6 +1338,7 @@ const WISHLIST_QUESTIONS = [
   {
     id: 'wl_volume',
     label: 'Do you have a sense of how many items you\'d be working with each time?',
+    subFn: () => getVolumeSubCopy(state.wishlistAnswers['wl_work_type'] || []),
     sub: 'Optional — it\'s okay if this is hard to estimate for something you haven\'t built yet.',
     type: 'single',
     optional: true,
@@ -998,7 +1352,7 @@ const WISHLIST_QUESTIONS = [
   },
   {
     id: 'wl_data_sensitivity',
-    label: 'Who would be in this data?',
+    label: 'What would be in this data?',
     type: 'single',
     options: [
       { value: 'anonymized', label: 'Anonymized — no names, no identifying information' },
@@ -1109,44 +1463,64 @@ function updateProgress() {
   if (state.currentScreen === 'welcome') { shell.style.display = 'none'; return; }
   shell.style.display = 'block';
 
-  // Build segments: up to 3 workflows + AI section
-  const totalWorkflows = 3;
+  // Determine how many workflow segments to show:
+  // Show completed workflows + current one (if in progress), min 1, max 3
+  const screen = state.currentScreen;
+  const isDone = screen === 'loading' || screen === 'verdicts' || screen === 'complete';
+  const inAI   = screen === 'ai';
+
+  // How many workflow segments to actually render
+  const completedWfs = state.workflows.length;
+  const inProgressWf = (!isDone && !inAI && completedWfs < 3) ? 1 : 0;
+  const wfSegCount   = Math.max(1, Math.min(3, completedWfs + inProgressWf));
+
+  // Build segments dynamically
   const segments = [];
-  for (let i = 1; i <= totalWorkflows; i++) {
+  for (let i = 1; i <= wfSegCount; i++) {
     segments.push({ label: `Workflow ${i}`, type: 'workflow', index: i });
   }
   segments.push({ label: 'AI Readiness', type: 'ai' });
 
-  // Calculate current progress
-  let currentSegIdx = state.currentWorkflow - 1;
-  let segProgress = 0;
+  // AI section index
+  const aiSegIdx = segments.length - 1;
 
-  if (state.currentScreen === 'ai') {
-    currentSegIdx = 3;
-    segProgress = state.aiStep / AI_QUESTIONS.length;
-  } else if (state.currentScreen === 'complete') {
-    currentSegIdx = 4;
-    segProgress = 1;
-  } else if (state.currentScreen === 'gate') {
+  // Which segment is active and how far through it
+  let currentSegIdx = 0;
+  let segProgress   = 0;
+
+  if (isDone) {
+    // All segments complete
+    currentSegIdx = segments.length; // past the end = all done
+    segProgress   = 1;
+  } else if (inAI) {
+    currentSegIdx = aiSegIdx;
+    segProgress   = state.aiStep / AI_QUESTIONS.length;
+  } else if (screen === 'gate') {
     currentSegIdx = state.workflows.length - 1;
-    segProgress = 1;
-  } else if (state.currentScreen === 'existing') {
+    segProgress   = 1;
+  } else if (screen === 'existing') {
     currentSegIdx = state.currentWorkflow - 1;
-    segProgress = state.existingStep / EXISTING_QUESTIONS.length;
-  } else if (state.currentScreen === 'wishlist') {
+    segProgress   = state.existingStep / EXISTING_QUESTIONS.length;
+  } else if (screen === 'wishlist') {
     currentSegIdx = state.currentWorkflow - 1;
-    segProgress = state.wishlistStep / WISHLIST_QUESTIONS.length;
-  } else if (state.currentScreen === 'wf-start') {
+    segProgress   = state.wishlistStep / WISHLIST_QUESTIONS.length;
+  } else if (screen === 'wf-start') {
     currentSegIdx = state.currentWorkflow - 1;
-    segProgress = 0;
+    segProgress   = 0;
   }
 
-  // Overall pct
-  const totalQ = (state.workflows.length > 0 ? state.workflows.length * 12 : 0) +
-    (state.currentBranch === 'existing' ? state.existingStep : state.wishlistStep) +
-    state.aiStep;
-  const maxQ = 3 * 12 + AI_QUESTIONS.length;
-  const overallPct = Math.round((totalQ / maxQ) * 100);
+  // Overall % — denominator = actual segments user has committed to
+  // = completed workflows * avg questions + current in-progress + ai steps
+  const avgWfQ   = (EXISTING_QUESTIONS.length + WISHLIST_QUESTIONS.length) / 2;
+  const maxQ     = (wfSegCount * avgWfQ) + AI_QUESTIONS.length;
+  const doneWfQ  = state.workflows.reduce((sum, wf) => {
+    return sum + (wf.branch === 'existing' ? EXISTING_QUESTIONS.length : WISHLIST_QUESTIONS.length);
+  }, 0);
+  const curQ     = isDone
+    ? maxQ
+    : (state.currentBranch === 'existing' ? state.existingStep : state.wishlistStep);
+  const totalQ   = doneWfQ + curQ + state.aiStep;
+  const overallPct = isDone ? 100 : Math.min(99, Math.round((totalQ / maxQ) * 100));
   pct.textContent = overallPct + '%';
 
   // Render tracks
@@ -1154,27 +1528,28 @@ function updateProgress() {
   segments.forEach((seg, i) => {
     const dot = document.createElement('div');
     dot.className = 'track-dot';
-    if (i < currentSegIdx) dot.classList.add('done');
-    else if (i === currentSegIdx) dot.classList.add('active');
+    const isSegDone   = i < currentSegIdx || isDone;
+    const isSegActive = !isDone && i === currentSegIdx;
+    if (isSegDone)   dot.classList.add('done');
+    if (isSegActive) dot.classList.add('active');
 
     const track = document.createElement('div');
     track.className = 'track';
     const fill = document.createElement('div');
     fill.className = 'track-fill';
 
-    if (i < currentSegIdx) { track.classList.add('done'); fill.style.width = '100%'; }
-    else if (i === currentSegIdx) { track.classList.add('active'); fill.style.width = (segProgress * 100) + '%'; }
+    if (isSegDone)        { track.classList.add('done');   fill.style.width = '100%'; }
+    else if (isSegActive) { track.classList.add('active'); fill.style.width = (segProgress * 100) + '%'; }
 
     track.appendChild(fill);
-
     if (i === 0) tracks.appendChild(dot);
     tracks.appendChild(track);
     tracks.appendChild(dot);
   });
 
   // Label
-  if (state.currentScreen === 'ai') label.textContent = 'AI Readiness';
-  else if (state.currentScreen === 'complete') label.textContent = 'Complete';
+  if (isDone || state.currentScreen === 'confirm') label.textContent = 'Complete';
+  else if (inAI) label.textContent = 'AI Readiness';
   else label.textContent = `Workflow ${state.currentWorkflow}`;
 }
 
@@ -1244,6 +1619,33 @@ function confirmWfStart() {
   updateProgress();
 }
 
+
+// ── DYNAMIC VOLUME SUB-COPY ──────────────────────────────────
+function getVolumeSubCopy(workTypes) {
+  if (!workTypes || workTypes.length === 0)
+    return 'Items = whatever the unit is for this workflow — rows, files, responses, documents.';
+
+  const map = {
+    tagging:           'Items = individual survey responses, open-ends, or verbatims.',
+    patterns:          'Items = individual survey responses, data rows, or records.',
+    summarizing:       'Items = individual documents, reports, or transcripts.',
+    translating:       'Items = individual reports, briefs, or data files.',
+    reorganizing:      'Items = individual rows, records, or files being restructured.',
+    checking:          'Items = individual records, rows, or files being reviewed.',
+    generating:        'Items = individual outputs being created — slides, reports, charts.',
+    comparing:         'Items = individual records or data points being compared.',
+    marketing_content: 'Items = individual pieces of content — posts, articles, or briefs.',
+    concepts:          'Items = individual concepts, territories, or stimuli being generated.',
+    admin:             'Items = individual meetings, transactions, or documents being processed.',
+  };
+
+  // Pick the most specific match based on first selected work type
+  for (const wt of workTypes) {
+    if (map[wt]) return map[wt];
+  }
+  return 'Items = whatever the unit is for this workflow — rows, files, responses, documents.';
+}
+
 // ══════════════════════════════════════════════════════
 // QUESTION RENDERER
 // ══════════════════════════════════════════════════════
@@ -1264,10 +1666,11 @@ function renderQuestion(q, answers, onAnswer, containerEl) {
   }
   wrap.appendChild(label);
 
-  if (q.sub) {
+  const subText = q.subFn ? q.subFn() : (typeof q.sub === 'function' ? q.sub() : q.sub);
+  if (subText) {
     const sub = document.createElement('div');
     sub.className = 'q-sub';
-    sub.textContent = q.sub;
+    sub.textContent = subText;
     wrap.appendChild(sub);
   }
 
@@ -1386,6 +1789,8 @@ function existingNext() {
   if (!q.optional && q.type !== 'multi') {
     if (!state.existingAnswers[q.id]) { shake(); return; }
   }
+  const qId = EXISTING_QUESTIONS[state.existingStep].id;
+  logSession(qId);
   if (state.existingStep < EXISTING_QUESTIONS.length - 1) {
     state.existingStep++;
     renderExistingStep();
@@ -1436,6 +1841,8 @@ function wishlistNext() {
   if (!q.optional && q.type !== 'multi') {
     if (!state.wishlistAnswers[q.id]) { shake(); return; }
   }
+  const qIdW = WISHLIST_QUESTIONS[state.wishlistStep].id;
+  logSession(qIdW);
   if (state.wishlistStep < WISHLIST_QUESTIONS.length - 1) {
     state.wishlistStep++;
     renderWishlistStep();
@@ -1547,6 +1954,8 @@ function renderAIStep() {
 function aiNext() {
   const q = AI_QUESTIONS[state.aiStep];
   if (q.type === 'single' && !state.aiAnswers[q.id]) { shake(); return; }
+  const qIdA = AI_QUESTIONS[state.aiStep].id;
+  logSession(qIdA);
   if (state.aiStep < AI_QUESTIONS.length - 1) {
     state.aiStep++;
     renderAIStep();
@@ -1581,6 +1990,55 @@ function showComplete() {
   updateProgress();
 }
 
+
+// ══════════════════════════════════════════════════════
+// SUBMISSION
+// ══════════════════════════════════════════════════════
+
+async function submitDiagnostic() {
+  const name  = document.getElementById('submitName').value.trim();
+  const email = document.getElementById('submitEmail').value.trim();
+  const errEl = document.getElementById('submitError');
+
+  if (!name || !email || !email.includes('@')) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const btn = document.querySelector('.submit-wrap .btn-orange');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    // Write to Google Sheets via Worker
+    if (!WORKER_URL.includes('YOUR_WORKER')) {
+      await fetch(WORKER_URL + '/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: SESSION_ID,
+          name,
+          email,
+          workflowCount: state.workflows.length,
+          workflows: state.workflows,
+          aiAnswers: state.aiAnswers,
+          verdicts: state.verdictData ? state.verdictData.workflows : [],
+          summary: state.verdictData ? state.verdictData.summary : '',
+        }),
+      });
+    }
+    showScreen('confirm');
+    updateProgress();
+  } catch (err) {
+    console.error('Submit error:', err);
+    btn.textContent = 'Send to Z and Book a Consultation →';
+    btn.disabled = false;
+    errEl.textContent = 'Something went wrong. Please try again or email zjohnson@mrxplorer.com directly.';
+    errEl.style.display = 'block';
+  }
+}
+
 // ══════════════════════════════════════════════════════
 // UTILITIES
 // ══════════════════════════════════════════════════════
@@ -1591,6 +2049,425 @@ function shake() {
   card.offsetHeight;
   card.style.animation = 'shake 0.4s ease';
   setTimeout(() => card.style.animation = '', 400);
+}
+
+
+
+// ══════════════════════════════════════════════════════
+// TRANSLATION MAPS
+// ══════════════════════════════════════════════════════
+
+const T = {
+  frequency: {
+    multiple_week: 'multiple times a week',
+    weekly: 'weekly',
+    monthly: 'monthly',
+    few_year: 'a few times a year',
+    project: 'project-dependent, hard to predict',
+  },
+  volume: {
+    under25: 'under 25 items',
+    '25_100': '25 to 100 items',
+    '100_500': '100 to 500 items',
+    '500plus': '500+ items',
+    no_idea: 'unknown — still conceptual',
+  },
+  input_type: {
+    structured: 'structured data (crosstabs, spreadsheets, databases)',
+    unstructured: 'unstructured text (open-ends, transcripts, reports, emails)',
+    existing_content: 'existing written content (past proposals, case studies, articles, website copy)',
+    company_info: 'company or organizational information (credentials, bios, service descriptions, past work)',
+    client_info: 'client or prospect information (RFPs, briefs, LinkedIn, websites)',
+    av: 'audio or video recordings',
+    visual: 'visual materials (slides, images, stimulus)',
+    briefs: 'client briefs or specs that vary every time',
+    internal_docs: 'internal business documents (meeting notes, financials, CRM, email threads)',
+    ideas_notes: 'raw ideas or notes (rough thinking needing shaping)',
+    scratch: 'inputs built from scratch each time',
+  },
+  input_consistency: {
+    consistent: 'consistent — same structure and format every time',
+    varies_predictable: 'varies, but within a predictable range',
+    different: 'different almost every time, depends on the client',
+  },
+  work_type: {
+    reorganizing: 'reorganizing or restructuring',
+    summarizing: 'summarizing or condensing',
+    translating: 'translating format (e.g. data into narrative)',
+    tagging: 'tagging, coding, or categorizing',
+    checking: 'checking for errors or consistency',
+    generating: 'generating new outputs (slides, reports, charts)',
+    patterns: 'finding patterns across large volumes',
+    comparing: 'comparing against a standard or benchmark',
+    marketing_content: 'creating marketing or social content (blog posts, LinkedIn, newsletters)',
+    concepts: 'generating concepts, stimuli, or ideas for testing',
+    admin: 'business administrative tasks (bookkeeping, meeting notes, follow-ups)',
+  },
+  judgment_call: {
+    yes: 'Yes — there is a clear judgment call embedded',
+    maybe: 'Possibly — needs further examination',
+    no: 'No — workflow is mechanical once the steps are known',
+  },
+  error_consequence: {
+    low: 'Low — caught in internal review before anything goes anywhere',
+    medium: 'Medium — likely caught before client delivery',
+    high: 'High — output goes directly to clients or downstream systems with minimal review',
+    catastrophic: 'Catastrophic — errors could affect client relationships, published findings, or regulatory submissions',
+  },
+  data_sensitivity: {
+    anonymized: 'already anonymized, no identifying information',
+    client_info: 'client company information, no individual PII',
+    participant_pii: 'individual participant data (names, verbatims, demographics)',
+    sensitive_pii: 'sensitive participant data (health, financial, political, or protected categories)',
+  },
+  nda: {
+    yes_know: 'Yes, covered by NDA or data agreement — specifics are known',
+    yes_check: 'Yes, likely covered — specifics would need to be checked',
+    informal: 'not formally, but treated as confidential',
+    none: 'no restrictions known',
+  },
+  wl_nda: {
+    yes_know: 'Yes, would be covered — implications are understood',
+    yes_check: 'Probably covered — specifics would need to be thought through',
+    informal: 'not formally, but would be treated as confidential',
+    none: 'no restrictions anticipated',
+  },
+  team_ownership: {
+    just_me: 'solo operator',
+    small: 'small team of 2–3 people',
+    larger: 'larger team or distributed across roles',
+    outsourced: 'outsourced or done by junior staff',
+  },
+  team_sentiment: {
+    relieved: 'Relieved — it is tedious and they would rather be doing something else',
+    neutral: 'Neutral — they would adapt',
+    uncertain: 'Uncertain — they might worry about what it means for their role',
+    resistant: 'Resistant — there would be real pushback',
+  },
+  wl_blocker: {
+    time: 'time (already at capacity)',
+    skills: 'skills (do not have the expertise yet)',
+    tools: 'tools (do not have the right technology)',
+    budget: 'budget (not been prioritized)',
+    all: 'all of the above',
+  },
+  wl_input_exists: {
+    exists: 'Yes — the input exists, they just do not process it yet',
+    partial: 'Partially — some input exists, some would need to be created',
+    create: 'No — the input would need to be created or collected first',
+    unsure: 'Unsure',
+  },
+  ai_tools: {
+    chatgpt: 'ChatGPT (OpenAI)',
+    claude: 'Claude (Anthropic)',
+    gemini: 'Gemini (Google)',
+    copilot: 'Copilot (Microsoft)',
+    specialized: 'specialized research tools (Otter.ai, Speak, Dovetail, Qualtrics AI, etc.)',
+    enterprise: 'internal or enterprise tools built on an LLM',
+    none: 'none known',
+    unsure: 'unknown — no visibility into what the team uses',
+  },
+  ai_tier: {
+    free: 'mostly free versions — no enterprise controls',
+    paid_individual: 'mostly paid individual subscriptions',
+    team_license: 'team or enterprise license in place',
+    mixed: 'mixed — some paid, some free, some nothing',
+    dont_know: 'unknown — no visibility into licensing',
+  },
+  ai_governance: {
+    yes_formal: 'yes, formal guidelines or policy in place',
+    yes_informal: 'informal alignment, nothing written down',
+    no: 'no — usage is individual and unstandardized',
+    just_me: 'solo operator, no team governance needed',
+    dont_know: 'unknown — no visibility into team behavior',
+  },
+  ai_training: {
+    formal: 'formal training (courses, workshops, vendor training)',
+    self_study: 'structured self-study — deliberate approach to learning',
+    trial_error: 'mostly trial and error',
+    vibes: 'no formal approach — figuring it out as they go',
+    none: 'no one is really using AI yet',
+  },
+};
+
+function tr(map, val) {
+  if (!val) return 'not answered';
+  if (Array.isArray(val)) {
+    if (val.length === 0) return 'none selected';
+    return val.map(v => map[v] || v).join(', ');
+  }
+  return map[val] || val;
+}
+
+// ══════════════════════════════════════════════════════
+// PROMPT ASSEMBLY
+// ══════════════════════════════════════════════════════
+
+function assembleUserMessage() {
+  let msg = '';
+
+  state.workflows.forEach((wf, i) => {
+    const a = wf.answers;
+    const isExisting = wf.branch === 'existing';
+    msg += `--- WORKFLOW ${i + 1}: "${wf.name}" (${isExisting ? 'existing workflow' : 'wishlist item'}) ---\n`;
+
+    if (isExisting) {
+      msg += `Frequency: ${tr(T.frequency, a.frequency)}\n`;
+      msg += `Volume per run: ${tr(T.volume, a.volume)}\n`;
+      msg += `Input type: ${tr(T.input_type, a.input_type)}\n`;
+      msg += `Input consistency: ${tr(T.input_consistency, a.input_consistency)}\n`;
+      msg += `Work being done: ${tr(T.work_type, a.work_type)}\n`;
+      msg += `Judgment call embedded: ${tr(T.judgment_call, a.judgment_call)}`;
+      if (a.judgment_desc) msg += ` — "${a.judgment_desc}"`;
+      msg += `\n`;
+      msg += `Error consequence: ${tr(T.error_consequence, a.error_consequence)}\n`;
+      msg += `Data sensitivity: ${tr(T.data_sensitivity, a.data_sensitivity)}\n`;
+      msg += `NDA or confidentiality coverage: ${tr(T.nda, a.nda)}\n`;
+      msg += `Who does this work: ${tr(T.team_ownership, a.team_ownership)}\n`;
+      msg += `Team sentiment toward AI involvement: ${tr(T.team_sentiment, a.team_sentiment)}\n`;
+    } else {
+      msg += `What this would unlock: ${a.wl_unlock || 'not answered'}\n`;
+      msg += `What has stopped them: ${tr(T.wl_blocker, a.wl_blocker)}\n`;
+      msg += `Input type: ${tr(T.input_type, a.wl_input_type)}\n`;
+      msg += `Does the input already exist: ${tr(T.wl_input_exists, a.wl_input_exists)}\n`;
+      msg += `Work being done: ${tr(T.work_type, a.wl_work_type)}\n`;
+      msg += `Output would be used for: ${a.wl_output_use || 'not specified'}\n`;
+      msg += `Desired frequency: ${tr(T.frequency, a.wl_frequency)}\n`;
+      msg += `Estimated volume: ${tr(T.volume, a.wl_volume)}\n`;
+      msg += `Data sensitivity: ${tr(T.data_sensitivity, a.wl_data_sensitivity)}\n`;
+      msg += `NDA or confidentiality coverage: ${tr(T.wl_nda, a.wl_nda)}\n`;
+    }
+    msg += `\n`;
+  });
+
+  msg += `--- AI TOOLS AND TEAM READINESS ---\n`;
+  msg += `Tools currently in use: ${tr(T.ai_tools, state.aiAnswers.ai_tools)}\n`;
+  msg += `Licensing situation: ${tr(T.ai_tier, state.aiAnswers.ai_tier)}\n`;
+  msg += `Shared standard or governance: ${tr(T.ai_governance, state.aiAnswers.ai_governance)}\n`;
+  msg += `Training background: ${tr(T.ai_training, state.aiAnswers.ai_training)}\n\n`;
+  msg += `--- CONTEXT ---\n`;
+  msg += `Number of workflows submitted: ${state.workflows.length}\n`;
+
+  return msg;
+}
+
+const SYSTEM_PROMPT = `You are applying the diagnostic framework of Z Johnson, founder of MRXplorer, a consulting firm that trains market research agencies and research technology companies to build AI capabilities internally. MRXplorer's model is education and training — not building tools for clients, not implementing automation on their behalf. The goal is always to teach teams the skills to build, prompt, and manage AI workflows themselves using Claude, Claude Cowork, and Claude Code.
+
+You are reading a completed workflow diagnostic submitted by a prospective client. Generate a verdict card for each workflow they entered, plus a summary paragraph across all of them.
+
+CRITICAL FRAMING: Every verdict and every summary must be oriented toward training enablement, not implementation consulting. The question is never "how do we automate this for them" — it is "what skills does this team need to learn, and which workflow is the best place to start building those skills." Automation readiness tells you which workflow makes the best training anchor — the one that is concrete enough to learn from, low-stakes enough to experiment with, and representative enough to transfer skills to harder workflows later.
+
+VOICE: Direct, warm, and specific. Write like someone who has spent 20+ years inside research operations and has seen these exact situations before. No filler. No unnecessary hedging. No corporate speak. Short sentences are fine. Specificity is everything: every observation must connect to something in their actual answers. If an answer is vague, name what is missing rather than papering over it.
+
+NEVER use em dashes. Use commas, semicolons, or colons instead.
+NEVER produce generic output that could apply to any research agency.
+NEVER make assumptions about data storage environments or technical infrastructure: the diagnostic does not capture this.
+NEVER frame the consultation or the verdicts as Z or MRXplorer building or implementing anything. The framing is always: what will this team learn to do themselves.
+
+TIERS: Assign one of four tiers to each workflow. The tier reflects both automation potential AND suitability as a training starting point.
+
+"Day 1 Candidate": Consistent inputs, low-to-medium error consequence, mechanical work with no buried judgment call, team is neutral or relieved, data is clean or anonymized. This workflow is a strong training anchor — concrete, learnable, and low-risk enough to experiment with in real time during a session.
+
+"Plan For This": Good potential but one or two flags: variable inputs, a judgment call needing a checkpoint, medium-to-high error consequence requiring QC thinking, or team sentiment that needs managing. Worth building toward — but the team needs to understand the complexity before they start, not after.
+
+"Staged Approach": High potential but meaningful complexity. High or catastrophic error consequence, sensitive PII, significant input instability, or a hard-to-isolate judgment call. This is a multi-session learning project, not a day-one exercise. The team needs foundational skills before they attempt this one.
+
+"Not Yet": Conditions are not right to begin learning with this workflow. Inputs do not exist, governance gaps need resolving first, or NDA specifics are unknown. Always pair with a specific prerequisite: what needs to be in place before this becomes a viable training target.
+
+WISHLIST WORKFLOWS: Treat identically to existing workflows for tier assignment. Framing shifts to: what skills would this team need to build this workflow themselves, and what is the realistic path to getting there. Only assign "Not Yet" if inputs genuinely do not exist with no clear near-term path, AND governance questions are unresolved. Always flag as a wishlist item in the tier_reason.
+
+BEFORE THE CALL: This field is the most important output. It should feel like specific advice from someone who already understands their situation. For existing workflows: something concrete to gather, document, or think through before the session — a real example of the workflow input and output, a note about where the judgment call lives, a check on what the NDA actually says. For wishlist items: a reality-check question or something to sketch out before arriving. The goal is for them to show up to the consultation already thinking, not starting from zero.
+
+SUMMARY: Write this as Z speaking directly to the prospect. Name the pattern across their workflows. Identify which workflow is the strongest training starting point and why — in plain language that makes them feel like the path forward is clear. Orient toward the skills they will build and what becomes possible once they have them. Two to three sentences. Warm, specific, forward-looking.
+
+RESPOND with valid JSON only. No preamble, no markdown, no explanation outside the JSON. Match this exact structure:
+
+{
+  "workflows": [
+    {
+      "name": "workflow name as the user entered it",
+      "branch": "existing or wishlist",
+      "tier": "Day 1 Candidate or Plan For This or Staged Approach or Not Yet",
+      "tier_reason": "One sentence explaining the tier in terms of both automation readiness and training suitability. For wishlist items, note this is something they want to build, not currently running.",
+      "observations": [
+        "Specific observation grounded in their answers — oriented toward what this means for learning, not just automation",
+        "Second observation",
+        "Third observation — include only if genuinely warranted"
+      ],
+      "before_the_call": "One concrete, specific action or question. Feels like advice from someone who already gets their situation. Not generic."
+    }
+  ],
+  "summary": "Two to three sentences. Names the pattern. Identifies the best training starting point. Written as Z to the prospect: warm, specific, skills-forward."
+}`;
+
+// ══════════════════════════════════════════════════════
+// LOADING STATE ANIMATION
+// ══════════════════════════════════════════════════════
+
+const LOADING_LINES = [
+  'Sending your answers to the MRXplorer diagnostic...',
+  "Claude is applying Z's assessment framework...",
+  'Generating your workflow verdict cards...',
+  'Almost done...',
+];
+
+let loadingInterval = null;
+
+function startLoadingAnimation() {
+  let idx = 0;
+  const el = document.getElementById('loadingLine');
+  el.textContent = LOADING_LINES[0];
+  loadingInterval = setInterval(() => {
+    idx = Math.min(idx + 1, LOADING_LINES.length - 1);
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'fadeUp 0.4s ease both';
+    el.textContent = LOADING_LINES[idx];
+    if (idx === LOADING_LINES.length - 1) clearInterval(loadingInterval);
+  }, 3200);
+}
+
+function stopLoadingAnimation() {
+  if (loadingInterval) clearInterval(loadingInterval);
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATE VERDICTS
+// ══════════════════════════════════════════════════════
+
+async function generateVerdicts() {
+  showScreen('loading');
+  startLoadingAnimation();
+
+  const userMessage = assembleUserMessage();
+
+  try {
+    const response = await fetch(WORKER_URL + '/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }],
+      }),
+    });
+
+    stopLoadingAnimation();
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error('API ' + response.status + ': ' + errText);
+    }
+
+    const data = await response.json();
+    const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    state.verdictData = parsed;
+    renderVerdicts(parsed);
+    showScreen('verdicts');
+    updateProgress();
+
+  } catch (err) {
+    stopLoadingAnimation();
+    console.error('Verdict generation error:', err);
+    showScreen('verdicts');
+    document.getElementById('verdictsWrap').innerHTML = `
+      <div class="verdict-error">
+        <strong>Something went wrong generating your verdict cards.</strong><br>
+        This is usually a temporary issue. Please try again — or if it keeps happening, 
+        contact Z directly at <a href="mailto:zjohnson@mrxplorer.com" style="color:inherit">zjohnson@mrxplorer.com</a> 
+        and she can run the assessment manually.<br><br>
+        <small style="opacity:.7">Error: ${err.message}</small>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-primary" onclick="generateVerdicts()">Try again →</button>
+      </div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER VERDICTS
+// ══════════════════════════════════════════════════════
+
+const TIER_META = {
+  'Day 1 Candidate': { cls: 'tier-day1', icon: '✓', label: 'Day 1 Candidate' },
+  'Plan For This':   { cls: 'tier-plan',  icon: '→', label: 'Plan For This' },
+  'Staged Approach': { cls: 'tier-staged',icon: '⚠', label: 'Staged Approach' },
+  'Not Yet':         { cls: 'tier-notyet',icon: '○', label: 'Not Yet' },
+};
+
+function renderVerdicts(data) {
+  const wrap = document.getElementById('verdictsWrap');
+  wrap.innerHTML = '';
+
+  // Transparency note
+  const note = document.createElement('div');
+  note.className = 'transparency-note';
+  note.innerHTML = "<strong>About these verdicts:</strong> These cards were generated by Claude using Z's diagnostic framework and your answers. Treat them as a strong starting point for your consultation conversation, not a final assessment. The consultation is where the real depth happens.";
+  wrap.appendChild(note);
+
+  // Workflow verdict cards
+  (data.workflows || []).forEach((wf, i) => {
+    const meta = TIER_META[wf.tier] || TIER_META['Plan For This'];
+
+    const card = document.createElement('div');
+    card.className = 'verdict-card';
+    card.style.animationDelay = (i * 0.1) + 's';
+
+    const obsHTML = (wf.observations || []).map(obs =>
+      `<div class="verdict-obs-item"><div class="verdict-obs-dot"></div><div>${obs}</div></div>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="verdict-head">
+        <div>
+          <div class="verdict-wf-name">${wf.name}</div>
+          <div class="verdict-wf-type">${wf.branch === 'existing' ? '⚙️ Existing workflow' : '✨ Wishlist item'}</div>
+        </div>
+        <div class="tier-badge ${meta.cls}">${meta.icon} ${meta.label}</div>
+      </div>
+      <div class="verdict-body">
+        <div class="verdict-tier-reason">${wf.tier_reason}</div>
+        <div class="verdict-observations">
+          <div class="verdict-obs-label">Key observations</div>
+          ${obsHTML}
+        </div>
+        <div class="verdict-before-call">
+          <div class="verdict-before-label">📋 Before the call</div>
+          <div class="verdict-before-text">${wf.before_the_call}</div>
+        </div>
+      </div>`;
+    wrap.appendChild(card);
+  });
+
+  // Summary block
+  if (data.summary) {
+    const summ = document.createElement('div');
+    summ.className = 'verdict-summary';
+    summ.innerHTML = `
+      <div class="verdict-summary-label">Z's read across all workflows</div>
+      <div class="verdict-summary-text">${data.summary}</div>`;
+    wrap.appendChild(summ);
+  }
+
+  // Submission form
+  const submitWrap = document.createElement('div');
+  submitWrap.className = 'submit-wrap';
+  submitWrap.innerHTML = `
+    <h3>Ready to book your free training consultation?</h3>
+    <p>Send your diagnostic to Z and she'll review your verdict cards before your call — so you skip discovery and get straight into the work.</p>
+    <div class="submit-fields">
+      <input type="text" id="submitName" placeholder="Your name" autocomplete="name">
+      <input type="email" id="submitEmail" placeholder="Your email" autocomplete="email">
+    </div>
+    <div class="submit-row">
+      <button class="btn btn-orange" onclick="submitDiagnostic()">Send to Z and Book a Consultation →</button>
+      <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
+    </div>
+    <div class="submit-error" id="submitError">Please enter your name and a valid email address.</div>
+    <div class="submit-note">Your answers and verdict cards will be sent to Z at MRXplorer. We don't share your information with anyone else.</div>`;
+  wrap.appendChild(submitWrap);
 }
 
 // Inject shake keyframes
