@@ -39,17 +39,48 @@
 
   /* ── PRINT ──────────────────────────────── */
   @media print {
-    body { background: white; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0.6in 0.65in; size: letter; }
+    body { background: white; font-size: 9.5pt; }
     .no-print { display: none !important; }
-    .page { box-shadow: none; margin: 0; border-radius: 0; }
-    .section { page-break-inside: avoid; }
-    input, textarea { border: 1px solid #ccc !important; }
-    .score-pill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .callout { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .check-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .cta-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .scoring-table tr td:last-child { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { box-shadow: none; margin: 0; border-radius: 0; max-width: 100%; }
+    header { padding: 28px 36px 24px; border-radius: 0; }
+    header h1 { font-size: 20pt; }
+    header p { font-size: 9.5pt; }
+    .content { padding: 24px 36px; }
+    .callout { font-size: 8.5pt; padding: 12px 16px; margin-bottom: 20px; }
+    .section { margin-bottom: 24pt; page-break-inside: avoid; }
+    .section-title { font-size: 13pt; }
+    .section-subtitle { font-size: 8pt; margin-bottom: 10px; }
+    .matrix-wrap { overflow: visible; }
+    .matrix-table { table-layout: fixed; width: 100%; min-width: unset; font-size: 7.5pt; border-collapse: collapse; }
+    .matrix-table thead th:nth-child(1) { width: 4%; }
+    .matrix-table thead th:nth-child(2) { width: 26%; }
+    .matrix-table thead th:nth-child(3) { width: 9%; }
+    .matrix-table thead th:nth-child(4) { width: 20%; }
+    .matrix-table thead th:nth-child(5) { width: 13%; }
+    .matrix-table thead th:nth-child(6) { width: 18%; }
+    .matrix-table thead th:nth-child(7) { width: 10%; }
+    .matrix-table thead th { font-size: 7pt; padding: 7px 6px; word-wrap: break-word; }
+    .matrix-table tbody td { padding: 7px 6px; word-wrap: break-word; overflow-wrap: break-word; vertical-align: top; }
+    .matrix-table input { border: none !important; background: transparent; font-size: 7.5pt; width: 100%; padding: 0; color: #333; }
+    .score-pill, .score-live { font-size: 7.5pt; padding: 2px 6px; display: inline-block; white-space: nowrap; }
+    .scoring-table { font-size: 8pt; }
+    .scoring-table td { padding: 7px 10px; }
+    .plus, .minus { font-size: 8pt; padding: 3px 7px; }
+    .threshold-note { font-size: 8.5pt; padding: 9px 14px; margin-top: 10px; }
+    .check-cards { gap: 10px; }
+    .check-card { page-break-inside: avoid; }
+    .check-card-head { padding: 10px 16px; }
+    .check-card-title { font-size: 11pt; }
+    .check-card-body { padding: 12px 16px; font-size: 8.5pt; }
+    .two-col { gap: 12px; margin-top: 12px; }
+    .avoid-box, .do-box { padding: 14px; font-size: 8.5pt; }
+    .box-title { font-size: 7.5pt; margin-bottom: 7px; }
+    .cta-box { padding: 22px 28px; page-break-inside: avoid; border-radius: 6px; }
+    .cta-box h3 { font-size: 13pt; margin-bottom: 8px; }
+    .cta-box p { font-size: 8.5pt; margin-bottom: 6px; }
+    .cta-btn { font-size: 8.5pt; padding: 9px 18px; margin-top: 12px; }
   }
 
   /* ── LAYOUT ─────────────────────────────── */
@@ -866,8 +897,9 @@
 
 <script>
   // ── FORMSPREE SUBMIT ──────────────────────────────────────────
-  // 
-  const FORMSPREE_ID = 'xvznoreo';
+  // IMPORTANT: Replace YOUR_FORM_ID below with your actual Formspree form ID.
+  // Create a free form at formspree.io, then paste the ID here (looks like: xpzgkwqr)
+  const FORMSPREE_ID = 'YOUR_FORM_ID';
 
   document.getElementById('auditForm').addEventListener('submit', async function(e) {
     e.preventDefault();
