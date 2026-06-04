@@ -1,8 +1,8 @@
-This is a website designed to help people select the tasks in their business that would be prime candidates for automating using AI. 
+This is a website designed to help insights teams walk through up to 3 repeated, time-consuming tasks to determine which might be best candidates to use as the base project for training on AI tools (Claude, Claude Cowork, and Claude Code). 
 
-This methodology employs review of:
-- time tasks take to complete
-- data privacy (what data does the task involve; any data involving PII is immediately suggested to be disqualified)
-- amount of data required (are you intending to feed an entire massive database or wanting to batch information).
-
-It also recommends against automating business-sensitive methodologies (proprietary information) and automating tasks that require human interpretation (applying human judgement to data).
+Step 1: name the task
+Step 2: is it currently happening or a wishlist
+Step 3: answer questions about the task, including the type of data required, data privacy, and human decisions applied during the task
+Step 4: answer questions about AI tools currently being used by the team, existing governance, and previous training taken by the team
+Step 5: run answers through a Claude instance to create "verdict cards" that apply MRXplorer thinking and assessment criteria to decide which tasks might be best candidates for training purposes. 
+Step 6: save as a PDF for personal use and/or send to MRXplorer to schedule a consultation to discuss possible training for the team. 
