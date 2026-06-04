@@ -1067,9 +1067,16 @@ const state = {
   verdictData: null,       // stores parsed verdict response
 };
 
-// ── SESSION LOGGING (fire and forget) ────────────────────────
+// ── SESSION LOGGING (screen-change only, debounced) ─────────
+let _lastLoggedScreen = null;
+
 function logSession(lastQuestion) {
-  if (WORKER_URL.includes('YOUR_WORKER')) return; // skip until deployed
+  if (WORKER_URL.includes('YOUR_WORKER')) return;
+  // Only log when the screen actually changes — not every question
+  const screenKey = state.currentScreen + '_' + state.currentWorkflow;
+  if (screenKey === _lastLoggedScreen) return;
+  _lastLoggedScreen = screenKey;
+
   const payload = {
     sessionId: SESSION_ID,
     currentScreen: state.currentScreen,
@@ -1086,7 +1093,7 @@ function logSession(lastQuestion) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  }).catch(() => {}); // silent fail — never block the user
+  }).catch(() => {});
 }
 
 // ══════════════════════════════════════════════════════
@@ -1440,6 +1447,8 @@ function showScreen(id) {
   const el = document.getElementById('screen-' + id);
   if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   state.currentScreen = id;
+  // Log on every screen transition — captures drop-off points cleanly
+  if (id !== 'welcome') logSession(id);
 }
 
 function pushHistory(screen) { state.history.push(screen); }
@@ -1789,8 +1798,6 @@ function existingNext() {
   if (!q.optional && q.type !== 'multi') {
     if (!state.existingAnswers[q.id]) { shake(); return; }
   }
-  const qId = EXISTING_QUESTIONS[state.existingStep].id;
-  logSession(qId);
   if (state.existingStep < EXISTING_QUESTIONS.length - 1) {
     state.existingStep++;
     renderExistingStep();
@@ -1841,8 +1848,6 @@ function wishlistNext() {
   if (!q.optional && q.type !== 'multi') {
     if (!state.wishlistAnswers[q.id]) { shake(); return; }
   }
-  const qIdW = WISHLIST_QUESTIONS[state.wishlistStep].id;
-  logSession(qIdW);
   if (state.wishlistStep < WISHLIST_QUESTIONS.length - 1) {
     state.wishlistStep++;
     renderWishlistStep();
@@ -1954,8 +1959,6 @@ function renderAIStep() {
 function aiNext() {
   const q = AI_QUESTIONS[state.aiStep];
   if (q.type === 'single' && !state.aiAnswers[q.id]) { shake(); return; }
-  const qIdA = AI_QUESTIONS[state.aiStep].id;
-  logSession(qIdA);
   if (state.aiStep < AI_QUESTIONS.length - 1) {
     state.aiStep++;
     renderAIStep();
