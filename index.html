@@ -839,10 +839,33 @@ textarea.text-input { resize: vertical; min-height: 90px; }
   flex-wrap: wrap;
 }
 
+
+/* ── HOME LINK ── */
+.home-link {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,.5);
+  font-size: .78rem;
+  font-weight: 500;
+  text-decoration: none;
+  margin-bottom: 14px;
+  transition: var(--transition);
+  letter-spacing: .02em;
+}
+.home-link:hover { color: rgba(255,255,255,.85); }
+.home-link svg { width: 14px; height: 14px; fill: currentColor; }
+
 </style>
 </head>
 <body>
 <div class="shell">
+
+  <!-- HOME LINK -->
+  <a href="https://www.mrxplorer.com" class="home-link" id="homeLink">
+    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Back to MRXplorer.com
+  </a>
 
   <!-- PROGRESS -->
   <div class="progress-shell" id="progressShell" style="display:none">
@@ -1032,7 +1055,7 @@ textarea.text-input { resize: vertical; min-height: 90px; }
         <h3>What happens next</h3>
         <p>Z will review your verdict cards before your call so you can skip discovery and get straight into the work. In the meantime, save a PDF copy of your results.</p>
         <div class="confirm-actions">
-          <a href="https://calendly.com/zjohnson-mrxplorer/30min" target="_blank" class="btn btn-orange">Book Your Free Consultation →</a>
+          <a href="https://mrxplorer.com" target="_blank" class="btn btn-orange">Book Your Consultation →</a>
           <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
         </div>
       </div>
@@ -1045,7 +1068,7 @@ textarea.text-input { resize: vertical; min-height: 90px; }
 // ══════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════
-// ── WORKER URL — 
+// ── WORKER URL — replace with your deployed Worker URL after deployment ──
 const WORKER_URL = 'https://mrxplorer-diagnostic.zjohnson-344.workers.dev';
 
 // Generate anonymous session ID
@@ -1469,8 +1492,14 @@ function updateProgress() {
   const label = document.getElementById('progressLabel');
   const pct = document.getElementById('progressPct');
 
-  if (state.currentScreen === 'welcome') { shell.style.display = 'none'; return; }
+  const homeLink = document.getElementById('homeLink');
+  if (state.currentScreen === 'welcome') {
+    shell.style.display = 'none';
+    if (homeLink) homeLink.style.display = 'none';
+    return;
+  }
   shell.style.display = 'block';
+  if (homeLink) homeLink.style.display = 'flex';
 
   // Determine how many workflow segments to show:
   // Show completed workflows + current one (if in progress), min 1, max 3
