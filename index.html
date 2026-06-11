@@ -909,7 +909,24 @@ textarea.text-input { resize: vertical; min-height: 90px; }
           <span>⏱</span>
           <span>Takes about 8–12 minutes per workflow. You'll get a complexity assessment for each one.</span>
         </div>
-        <button class="btn btn-primary" onclick="startDiagnostic()">
+
+        <div style="margin-bottom:24px">
+          <div class="q-label" style="margin-bottom:12px">Are you answering for yourself or for a team?</div>
+          <div class="branch-cards">
+            <button class="branch-card" id="type-individual" onclick="selectUserType('individual')">
+              <div class="branch-icon">👤</div>
+              <div class="branch-title">Just me</div>
+              <div class="branch-desc">I'm a solopreneur or freelancer — this is my own practice.</div>
+            </button>
+            <button class="branch-card" id="type-team" onclick="selectUserType('team')">
+              <div class="branch-icon">👥</div>
+              <div class="branch-title">A team</div>
+              <div class="branch-desc">I'm answering on behalf of a team or agency.</div>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="btnStart" onclick="startDiagnostic()" disabled>
           Start the Diagnostic <span>→</span>
         </button>
       </div>
@@ -996,9 +1013,9 @@ textarea.text-input { resize: vertical; min-height: 90px; }
     <!-- ══ AI TOOLS SECTION ══ -->
     <div class="screen" id="screen-ai">
       <div class="card-head ai-head">
-        <div class="eyebrow">Almost Done — AI Readiness</div>
-        <h2>Last section: your team's AI landscape.</h2>
-        <p>This helps us understand where you're starting from, not just where you want to go.</p>
+        <div class="eyebrow" id="aiSectionEyebrow">Almost Done — AI Setup</div>
+        <h2 id="aiSectionTitle">Last section: your AI landscape.</h2>
+        <p id="aiSectionDesc">This helps us understand where you're starting from, not just where you want to go.</p>
       </div>
       <div class="card-body" id="aiBody">
         <!-- Injected by JS -->
@@ -1088,6 +1105,7 @@ const state = {
   aiAnswers: {},
   history: [],
   verdictData: null,       // stores parsed verdict response
+  userType: null,          // 'individual' or 'team'
 };
 
 // ── SESSION LOGGING (screen-change only, debounced) ─────────
@@ -1532,7 +1550,7 @@ function updateProgress() {
     segProgress   = 1;
   } else if (inAI) {
     currentSegIdx = aiSegIdx;
-    segProgress   = state.aiStep / AI_QUESTIONS.length;
+    segProgress   = state.aiStep / getAIQuestions().length;
   } else if (screen === 'gate') {
     currentSegIdx = state.workflows.length - 1;
     segProgress   = 1;
@@ -1550,7 +1568,7 @@ function updateProgress() {
   // Overall % — denominator = actual segments user has committed to
   // = completed workflows * avg questions + current in-progress + ai steps
   const avgWfQ   = (EXISTING_QUESTIONS.length + WISHLIST_QUESTIONS.length) / 2;
-  const maxQ     = (wfSegCount * avgWfQ) + AI_QUESTIONS.length;
+  const maxQ     = (wfSegCount * avgWfQ) + getAIQuestions().length;
   const doneWfQ  = state.workflows.reduce((sum, wf) => {
     return sum + (wf.branch === 'existing' ? EXISTING_QUESTIONS.length : WISHLIST_QUESTIONS.length);
   }, 0);
@@ -1594,6 +1612,20 @@ function updateProgress() {
 // ══════════════════════════════════════════════════════
 // WELCOME
 // ══════════════════════════════════════════════════════
+
+function selectUserType(type) {
+  state.userType = type;
+  document.getElementById('type-individual').classList.toggle('selected', type === 'individual');
+  document.getElementById('type-team').classList.toggle('selected', type === 'team');
+  document.getElementById('btnStart').disabled = false;
+}
+
+function getAIQuestions() {
+  // Solo users skip the team governance question — it's not meaningful without a team
+  return state.userType === 'individual'
+    ? AI_QUESTIONS.filter(q => q.id !== 'ai_governance')
+    : AI_QUESTIONS;
+}
 
 function startDiagnostic() {
   state.currentWorkflow = 1;
@@ -1921,7 +1953,7 @@ function showGate() {
   document.getElementById('gateTitle').textContent = count === 1
     ? 'Workflow 1 complete.' : `${count} workflows complete.`;
   document.getElementById('gateDesc').textContent = count < 3
-    ? `You can add another workflow, or move on to the AI Readiness section — just ${AI_QUESTIONS.length} more questions and you're done.`
+    ? `You can add another workflow, or move on to the next section — just ${getAIQuestions().length} more questions and you're done.`
     : 'You\'ve completed all three workflows. Move on to the AI Readiness section to finish.';
 
   document.getElementById('btnAddAnother').style.display = count < 3 ? 'inline-flex' : 'none';
@@ -1962,6 +1994,16 @@ function goToAISection() {
   state.aiStep = 0;
   state.aiAnswers = {};
   pushHistory('gate');
+  // Adapt AI section header based on individual vs team
+  if (state.userType === 'team') {
+    document.getElementById('aiSectionEyebrow').textContent = 'Almost Done — AI Readiness';
+    document.getElementById('aiSectionTitle').textContent = "Last section: your team's AI landscape.";
+    document.getElementById('aiSectionDesc').textContent = "This helps us understand where your team is starting from, not just where you want to go.";
+  } else {
+    document.getElementById('aiSectionEyebrow').textContent = 'Almost Done — Your AI Setup';
+    document.getElementById('aiSectionTitle').textContent = 'Last section: your current AI setup.';
+    document.getElementById('aiSectionDesc').textContent = "This helps us understand where you're starting from, not just where you want to go.";
+  }
   renderAIStep();
   showScreen('ai');
   updateProgress();
@@ -1971,7 +2013,8 @@ function renderAIStep() {
   const body = document.getElementById('aiBody');
   body.innerHTML = '';
 
-  const q = AI_QUESTIONS[state.aiStep];
+  const questions = getAIQuestions();
+  const q = questions[state.aiStep];
   renderQuestion(q, state.aiAnswers, () => {}, body);
 
   const nav = document.createElement('div');
@@ -1979,16 +2022,17 @@ function renderAIStep() {
   nav.innerHTML = `
     <button class="btn btn-ghost" onclick="aiBack()">← Back</button>
     <button class="btn btn-primary" onclick="aiNext()">
-      ${state.aiStep < AI_QUESTIONS.length - 1 ? 'Continue →' : 'See my results →'}
+      ${state.aiStep < questions.length - 1 ? 'Continue →' : 'See my results →'}
     </button>`;
   body.appendChild(nav);
   updateProgress();
 }
 
 function aiNext() {
-  const q = AI_QUESTIONS[state.aiStep];
+  const questions = getAIQuestions();
+  const q = questions[state.aiStep];
   if (q.type === 'single' && !state.aiAnswers[q.id]) { shake(); return; }
-  if (state.aiStep < AI_QUESTIONS.length - 1) {
+  if (state.aiStep < questions.length - 1) {
     state.aiStep++;
     renderAIStep();
   } else {
@@ -2278,6 +2322,7 @@ function assembleUserMessage() {
   msg += `Shared standard or governance: ${tr(T.ai_governance, state.aiAnswers.ai_governance)}\n`;
   msg += `Training background: ${tr(T.ai_training, state.aiAnswers.ai_training)}\n\n`;
   msg += `--- CONTEXT ---\n`;
+  msg += `Answering as: ${state.userType === 'individual' ? 'individual / solopreneur' : 'team or agency'}\n`;
   msg += `Number of workflows submitted: ${state.workflows.length}\n`;
 
   return msg;
@@ -2310,6 +2355,8 @@ WHAT TO HAVE READY: Be concrete and specific. This is a checklist of the actual 
 WHAT TO CONSIDER: These are the design decisions and human factors they need to think through before building. Focus on: where does a person make a judgment call that is not written down anywhere (and how will the automated version handle it)? How does new input get fed into the workflow each time it runs — manual paste, file upload, a filled-in template? What does a human review step look like before anything goes to a client? Ground every item in what they actually answered. Two to four specific considerations.
 
 WISHLIST WORKFLOWS: Treat identically to existing workflows for complexity assignment. Shift the framing: what inputs would need to exist first, what would the build process look like, what is the realistic path. Complexity level still applies.
+
+INDIVIDUAL VS TEAM: The context section will tell you whether this person is answering as an individual/solopreneur or on behalf of a team. For individuals, speak directly to them ("you", not "your team"). For teams, speak to the group. The complexity assessments apply equally to both — adapt the language, not the rigor.
 
 SUMMARY: Write this as Z speaking directly to the person. Name what you see across their workflows. Connect their specific workflows to the two skills they will leave training with: branding and voice. Orient toward what becomes possible once they have those skills. Two to three sentences. Warm, specific, forward-looking.
 
