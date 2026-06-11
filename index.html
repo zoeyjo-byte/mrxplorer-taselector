@@ -889,12 +889,12 @@ textarea.text-input { resize: vertical; min-height: 90px; }
           <span class="logo-text">MRX<span>plorer</span></span>
         </div>
         <div class="eyebrow">Workflow Diagnostic</div>
-        <h2>Let's find out where AI can actually move the needle for your team.</h2>
-        <p>Not a quiz. Not a score. A real diagnostic — built for research teams.</p>
+        <h2>Let's map out what it would take to automate your workflows.</h2>
+        <p>A real complexity assessment — built for research teams.</p>
       </div>
       <div class="welcome-body">
         <p class="intro">
-          Think about <strong>up to three workflows</strong> — things your team does that regularly eat 10+ hours a week, or things you <em>wish</em> you could do but never have the bandwidth to start.
+          Think about <strong>up to three workflows</strong> — things your team does that eat time or require expertise you don't have yet, or things you <em>wish</em> you could do but never have the bandwidth to start.
         </p>
         <div class="examples">
           <p>Examples to get you thinking</p>
@@ -907,7 +907,7 @@ textarea.text-input { resize: vertical; min-height: 90px; }
         </div>
         <div class="time-note">
           <span>⏱</span>
-          <span>Takes about 8–12 minutes per workflow. You can stop after one if you'd like.</span>
+          <span>Takes about 8–12 minutes per workflow. You'll get a complexity assessment for each one.</span>
         </div>
         <button class="btn btn-primary" onclick="startDiagnostic()">
           Start the Diagnostic <span>→</span>
@@ -1010,16 +1010,16 @@ textarea.text-input { resize: vertical; min-height: 90px; }
       <div class="card-head" style="background: linear-gradient(135deg, #0e7f5a 0%, #065f46 100%);">
         <div class="eyebrow" style="color:#6ee7b7">Diagnostic Complete</div>
         <h2>You've done the hard thinking. Here's what happens next.</h2>
-        <p>Your verdict cards are ready to generate. We'll build those in the next step — for now, your answers are saved.</p>
+        <p>Your complexity assessments are ready to generate. We'll build those in the next step — for now, your answers are saved.</p>
       </div>
       <div class="card-body">
         <div class="summary-peek" id="completeSummary" style="margin-bottom:0"></div>
         <hr class="divider">
         <p style="font-size:.88rem; color:var(--gray-mid); text-align:center; margin-bottom:24px;">
-          The next step generates your personalized workflow verdict — plain-language readiness assessments for each workflow you entered, plus a consultation prep summary.
+          The next step generates your personalized complexity assessments — plain-language breakdowns of what it would take to automate each workflow, what inputs to gather, and what to think through before you start building.
         </p>
         <div style="text-align:center">
-          <button class="btn btn-orange" onclick="generateVerdicts()">Generate My Verdict Cards →</button>
+          <button class="btn btn-orange" onclick="generateVerdicts()">Generate My Assessments →</button>
         </div>
       </div>
     </div>
@@ -1053,7 +1053,7 @@ textarea.text-input { resize: vertical; min-height: 90px; }
       <div class="confirm-body">
         <div class="confirm-icon">✓</div>
         <h3>What happens next</h3>
-        <p>Z will review your verdict cards before your call so you can skip discovery and get straight into the work. In the meantime, save a PDF copy of your results.</p>
+        <p>Z will review your complexity assessments before your call so you arrive with a clear picture of what you're working with. In the meantime, save a PDF copy of your results.</p>
         <div class="confirm-actions">
           <a href="https://mrxplorer.com" target="_blank" class="btn btn-orange">Book Your Consultation →</a>
           <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
@@ -2283,34 +2283,35 @@ function assembleUserMessage() {
   return msg;
 }
 
-const SYSTEM_PROMPT = `You are applying the diagnostic framework of Z Johnson, founder of MRXplorer, a consulting firm that trains market research agencies and research technology companies to build AI capabilities internally. MRXplorer's model is education and training — not building tools for clients, not implementing automation on their behalf. The goal is always to teach teams the skills to build, prompt, and manage AI workflows themselves using Claude, Claude Cowork, and Claude Code.
+const SYSTEM_PROMPT = `You are applying the diagnostic framework of Z Johnson, founder of MRXplorer, a consulting firm that trains market research agencies and research technology companies to build AI capabilities internally using Claude. MRXplorer training always delivers two core Claude skills: one for branding (maintaining brand voice, visual standards, and consistent client-facing language) and one for writing in the team's voice (proposals, narratives, reports, emails).
 
-You are reading a completed workflow diagnostic submitted by a prospective client. Generate a verdict card for each workflow they entered, plus a summary paragraph across all of them.
+You are reading a completed workflow diagnostic submitted by a prospective trainee. Generate a complexity assessment card for each workflow they entered, plus a summary across all of them.
 
-CRITICAL FRAMING: Every verdict and every summary must be oriented toward training enablement, not implementation consulting. The question is never "how do we automate this for them" — it is "what skills does this team need to learn, and which workflow is the best place to start building those skills." Automation readiness tells you which workflow makes the best training anchor — the one that is concrete enough to learn from, low-stakes enough to experiment with, and representative enough to transfer skills to harder workflows later.
+The question is not "which workflow should they start with." The question for each workflow is: how complex would this be to automate, what data and inputs do they need to have ready, and what do they need to think through before they start building?
 
 VOICE: Direct, warm, and specific. Write like someone who has spent 20+ years inside research operations and has seen these exact situations before. No filler. No unnecessary hedging. No corporate speak. Short sentences are fine. Specificity is everything: every observation must connect to something in their actual answers. If an answer is vague, name what is missing rather than papering over it.
 
 NEVER use em dashes. Use commas, semicolons, or colons instead.
 NEVER produce generic output that could apply to any research agency.
 NEVER make assumptions about data storage environments or technical infrastructure: the diagnostic does not capture this.
-NEVER frame the consultation or the verdicts as Z or MRXplorer building or implementing anything. The framing is always: what will this team learn to do themselves.
 
-TIERS: Assign one of four tiers to each workflow. The tier reflects both automation potential AND suitability as a training starting point.
+COMPLEXITY LEVELS: Assign one of four levels to each workflow.
 
-"Day 1 Candidate": Consistent inputs, low-to-medium error consequence, mechanical work with no buried judgment call, team is neutral or relieved, data is clean or anonymized. This workflow is a strong training anchor — concrete, learnable, and low-risk enough to experiment with in real time during a session.
+"Straightforward": Consistent inputs, mechanical work, no buried judgment calls, clean or anonymized data. The automation logic is clear and the inputs are ready or easy to assemble. A good place to start building confidence.
 
-"Plan For This": Good potential but one or two flags: variable inputs, a judgment call needing a checkpoint, medium-to-high error consequence requiring QC thinking, or team sentiment that needs managing. Worth building toward — but the team needs to understand the complexity before they start, not after.
+"Moderate": Good potential but one or two complicating factors: variable inputs, a judgment call that needs to be named and checkpointed, medium error consequence requiring QC thinking. Doable, but requires some design thinking before building.
 
-"Staged Approach": High potential but meaningful complexity. High or catastrophic error consequence, sensitive PII, significant input instability, or a hard-to-isolate judgment call. This is a multi-session learning project, not a day-one exercise. The team needs foundational skills before they attempt this one.
+"Complex": High potential but meaningful complexity: high error consequence, sensitive data, significant input variability, or a hard-to-isolate judgment call. Requires careful architecture and likely multiple iterations to get right.
 
-"Not Yet": Conditions are not right to begin learning with this workflow. Inputs do not exist, governance gaps need resolving first, or NDA specifics are unknown. Always pair with a specific prerequisite: what needs to be in place before this becomes a viable training target.
+"Not Ready Yet": Conditions are not right to begin. Inputs do not exist, governance gaps need resolving, or NDA specifics are unknown. Always pair with a specific prerequisite: what needs to be in place before this is viable.
 
-WISHLIST WORKFLOWS: Treat identically to existing workflows for tier assignment. Framing shifts to: what skills would this team need to build this workflow themselves, and what is the realistic path to getting there. Only assign "Not Yet" if inputs genuinely do not exist with no clear near-term path, AND governance questions are unresolved. Always flag as a wishlist item in the tier_reason.
+WHAT TO HAVE READY: Be concrete and specific. This is a checklist of the actual data, documents, and assets they need to assemble before they can build this workflow. Tailor every item to their specific workflow and the input types they described. Examples of the specificity required: "At least 5 past proposals you consider strong examples of your voice", "Your brand guide, including font names, hex color codes, and logo file formats", "A complete RFP or client brief from a recent project to use as the input template", "Your standard crosstab template with column and formatting structure intact". Two to four items.
 
-BEFORE THE CALL: This field is the most important output. It should feel like specific advice from someone who already understands their situation. For existing workflows: something concrete to gather, document, or think through before the session — a real example of the workflow input and output, a note about where the judgment call lives, a check on what the NDA actually says. For wishlist items: a reality-check question or something to sketch out before arriving. The goal is for them to show up to the consultation already thinking, not starting from zero.
+WHAT TO CONSIDER: These are the design decisions and human factors they need to think through before building. Focus on: where does a person make a judgment call that is not written down anywhere (and how will the automated version handle it)? How does new input get fed into the workflow each time it runs — manual paste, file upload, a filled-in template? What does a human review step look like before anything goes to a client? Ground every item in what they actually answered. Two to four specific considerations.
 
-SUMMARY: Write this as Z speaking directly to the prospect. Name the pattern across their workflows. Identify which workflow is the strongest training starting point and why — in plain language that makes them feel like the path forward is clear. Orient toward the skills they will build and what becomes possible once they have them. Two to three sentences. Warm, specific, forward-looking.
+WISHLIST WORKFLOWS: Treat identically to existing workflows for complexity assignment. Shift the framing: what inputs would need to exist first, what would the build process look like, what is the realistic path. Complexity level still applies.
+
+SUMMARY: Write this as Z speaking directly to the person. Name what you see across their workflows. Connect their specific workflows to the two skills they will leave training with: branding and voice. Orient toward what becomes possible once they have those skills. Two to three sentences. Warm, specific, forward-looking.
 
 RESPOND with valid JSON only. No preamble, no markdown, no explanation outside the JSON. Match this exact structure:
 
@@ -2319,17 +2320,21 @@ RESPOND with valid JSON only. No preamble, no markdown, no explanation outside t
     {
       "name": "workflow name as the user entered it",
       "branch": "existing or wishlist",
-      "tier": "Day 1 Candidate or Plan For This or Staged Approach or Not Yet",
-      "tier_reason": "One sentence explaining the tier in terms of both automation readiness and training suitability. For wishlist items, note this is something they want to build, not currently running.",
-      "observations": [
-        "Specific observation grounded in their answers — oriented toward what this means for learning, not just automation",
-        "Second observation",
-        "Third observation — include only if genuinely warranted"
+      "complexity": "Straightforward or Moderate or Complex or Not Ready Yet",
+      "complexity_reason": "One sentence explaining the complexity level, grounded in their specific answers. For wishlist items, note this is something they want to build, not currently running.",
+      "what_to_have_ready": [
+        "Specific item 1 — concrete and tailored to their workflow, not generic",
+        "Specific item 2",
+        "Specific item 3"
       ],
-      "before_the_call": "One concrete, specific action or question. Feels like advice from someone who already gets their situation. Not generic."
+      "what_to_consider": [
+        "Specific consideration 1 — grounded in their answers, not generic",
+        "Specific consideration 2",
+        "Specific consideration 3"
+      ]
     }
   ],
-  "summary": "Two to three sentences. Names the pattern. Identifies the best training starting point. Written as Z to the prospect: warm, specific, skills-forward."
+  "summary": "Two to three sentences. Names the pattern across their workflows. Connects their work to the branding and voice skills they will build. Written as Z to the person: warm, specific, forward-looking."
 }`;
 
 // ══════════════════════════════════════════════════════
@@ -2338,8 +2343,8 @@ RESPOND with valid JSON only. No preamble, no markdown, no explanation outside t
 
 const LOADING_LINES = [
   'Sending your answers to the MRXplorer diagnostic...',
-  "Claude is applying Z's assessment framework...",
-  'Generating your workflow verdict cards...',
+  'Claude is mapping the complexity of each workflow...',
+  'Building your complexity assessments...',
   'Almost done...',
 ];
 
@@ -2406,7 +2411,7 @@ async function generateVerdicts() {
     showScreen('verdicts');
     document.getElementById('verdictsWrap').innerHTML = `
       <div class="verdict-error">
-        <strong>Something went wrong generating your verdict cards.</strong><br>
+        <strong>Something went wrong generating your assessments.</strong><br>
         This is usually a temporary issue. Please try again — or if it keeps happening, 
         contact Z directly at <a href="mailto:zjohnson@mrxplorer.com" style="color:inherit">zjohnson@mrxplorer.com</a> 
         and she can run the assessment manually.<br><br>
@@ -2422,11 +2427,11 @@ async function generateVerdicts() {
 // RENDER VERDICTS
 // ══════════════════════════════════════════════════════
 
-const TIER_META = {
-  'Day 1 Candidate': { cls: 'tier-day1', icon: '✓', label: 'Day 1 Candidate' },
-  'Plan For This':   { cls: 'tier-plan',  icon: '→', label: 'Plan For This' },
-  'Staged Approach': { cls: 'tier-staged',icon: '⚠', label: 'Staged Approach' },
-  'Not Yet':         { cls: 'tier-notyet',icon: '○', label: 'Not Yet' },
+const COMPLEXITY_META = {
+  'Straightforward': { cls: 'tier-day1',   icon: '✓', label: 'Straightforward' },
+  'Moderate':        { cls: 'tier-plan',   icon: '→', label: 'Moderate' },
+  'Complex':         { cls: 'tier-staged', icon: '⚠', label: 'Complex' },
+  'Not Ready Yet':   { cls: 'tier-notyet', icon: '○', label: 'Not Ready Yet' },
 };
 
 function renderVerdicts(data) {
@@ -2436,19 +2441,23 @@ function renderVerdicts(data) {
   // Transparency note
   const note = document.createElement('div');
   note.className = 'transparency-note';
-  note.innerHTML = "<strong>About these verdicts:</strong> These cards were generated by Claude using Z's diagnostic framework and your answers. Treat them as a strong starting point for your consultation conversation, not a final assessment. The consultation is where the real depth happens.";
+  note.innerHTML = "<strong>About these assessments:</strong> These cards were generated by Claude using Z's diagnostic framework and your answers. Treat them as a strong starting point for your consultation conversation, not a final assessment. The consultation is where the real depth happens.";
   wrap.appendChild(note);
 
-  // Workflow verdict cards
+  // Workflow complexity assessment cards
   (data.workflows || []).forEach((wf, i) => {
-    const meta = TIER_META[wf.tier] || TIER_META['Plan For This'];
+    const meta = COMPLEXITY_META[wf.complexity] || COMPLEXITY_META['Moderate'];
 
     const card = document.createElement('div');
     card.className = 'verdict-card';
     card.style.animationDelay = (i * 0.1) + 's';
 
-    const obsHTML = (wf.observations || []).map(obs =>
-      `<div class="verdict-obs-item"><div class="verdict-obs-dot"></div><div>${obs}</div></div>`
+    const readyHTML = (wf.what_to_have_ready || []).map(item =>
+      `<div class="verdict-obs-item"><div class="verdict-obs-dot"></div><div>${item}</div></div>`
+    ).join('');
+
+    const considerHTML = (wf.what_to_consider || []).map(item =>
+      `<div class="verdict-obs-item"><div class="verdict-obs-dot"></div><div>${item}</div></div>`
     ).join('');
 
     card.innerHTML = `
@@ -2460,14 +2469,14 @@ function renderVerdicts(data) {
         <div class="tier-badge ${meta.cls}">${meta.icon} ${meta.label}</div>
       </div>
       <div class="verdict-body">
-        <div class="verdict-tier-reason">${wf.tier_reason}</div>
+        <div class="verdict-tier-reason">${wf.complexity_reason}</div>
         <div class="verdict-observations">
-          <div class="verdict-obs-label">Key observations</div>
-          ${obsHTML}
+          <div class="verdict-obs-label">What to have ready</div>
+          ${readyHTML}
         </div>
-        <div class="verdict-before-call">
-          <div class="verdict-before-label">📋 Before the call</div>
-          <div class="verdict-before-text">${wf.before_the_call}</div>
+        <div class="verdict-observations" style="margin-top:16px">
+          <div class="verdict-obs-label">What to consider</div>
+          ${considerHTML}
         </div>
       </div>`;
     wrap.appendChild(card);
@@ -2478,7 +2487,7 @@ function renderVerdicts(data) {
     const summ = document.createElement('div');
     summ.className = 'verdict-summary';
     summ.innerHTML = `
-      <div class="verdict-summary-label">Z's read across all workflows</div>
+      <div class="verdict-summary-label">Z's take across all workflows</div>
       <div class="verdict-summary-text">${data.summary}</div>`;
     wrap.appendChild(summ);
   }
@@ -2488,7 +2497,7 @@ function renderVerdicts(data) {
   submitWrap.className = 'submit-wrap';
   submitWrap.innerHTML = `
     <h3>Ready to book your free training consultation?</h3>
-    <p>Send your diagnostic to Z and she'll review your verdict cards before your call — so you skip discovery and get straight into the work.</p>
+    <p>Send your assessments to Z and she'll review them before your call — so you arrive ready to start building, not starting from zero.</p>
     <div class="submit-fields">
       <input type="text" id="submitName" placeholder="Your name" autocomplete="name">
       <input type="email" id="submitEmail" placeholder="Your email" autocomplete="email">
@@ -2498,7 +2507,7 @@ function renderVerdicts(data) {
       <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
     </div>
     <div class="submit-error" id="submitError">Please enter your name and a valid email address.</div>
-    <div class="submit-note">Your answers and verdict cards will be sent to Z at MRXplorer. We don't share your information with anyone else.</div>`;
+    <div class="submit-note">Your answers and complexity assessments will be sent to Z at MRXplorer. We don't share your information with anyone else.</div>`;
   wrap.appendChild(submitWrap);
 }
 
