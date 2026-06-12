@@ -1218,7 +1218,9 @@ const EXISTING_QUESTIONS = [
   },
   {
     id: 'judgment_call',
-    label: 'Somewhere in this workflow, is there a moment where someone makes a call that isn\'t written down anywhere?',
+    label: () => state.userType === 'individual'
+      ? "Somewhere in this workflow, is there a moment where you make a call that isn't written down anywhere?"
+      : "Somewhere in this workflow, is there a moment where someone makes a call that isn't written down anywhere?",
     sub: 'For example: deciding whether an open-end is "negative" or just "neutral but frustrated." Knowing that this client always wants verbatims even when the brief doesn\'t say so. Recognizing a crosstab looks wrong because the base sizes are off in a non-obvious way.',
     type: 'single',
     options: [
@@ -1241,8 +1243,8 @@ const EXISTING_QUESTIONS = [
     sub: "High stakes doesn't disqualify automation. It defines the QC architecture.",
     type: 'single',
     options: [
-      { value: 'low', label: 'Low stakes', note: 'Someone on my team would catch it in review before it went anywhere', flag: { type: 'good', text: 'Easy to catch errors = lower-risk automation. A good Day 1 candidate.' } },
-      { value: 'medium', label: 'Medium stakes', note: "It might make it into a draft but we'd catch it before client delivery" },
+      { value: 'low', label: 'Low stakes', note: () => state.userType === 'individual' ? "I'd catch it in review before it went anywhere" : "Someone on my team would catch it in review before it went anywhere", flag: { type: 'good', text: 'Easy to catch errors = lower-risk automation. A good starting point.' } },
+      { value: 'medium', label: 'Medium stakes', note: () => state.userType === 'individual' ? "It might make it into a draft but I'd catch it before client delivery" : "It might make it into a draft but we'd catch it before client delivery" },
       { value: 'high', label: 'High stakes', note: 'This output goes directly to a client or downstream system with minimal review', flag: { type: 'warn', text: "High-stakes output needs a QC checkpoint built into the workflow before anything goes to a client. That's the conversation, not a reason to avoid automating." } },
       { value: 'catastrophic', label: 'Catastrophic', note: 'An error here could affect a client relationship, a published finding, or a regulatory submission', flag: { type: 'warn', text: "This workflow needs a staged approach with explicit human sign-off at key points. Still automatable — just architected carefully." } },
     ]
@@ -1308,11 +1310,11 @@ const WISHLIST_QUESTIONS = [
     sub: 'Select all that apply.',
     type: 'multi',
     options: [
-      { value: 'time', label: "Time — we're already at capacity" },
-      { value: 'skills', label: "Skills — we don't have the expertise yet" },
-      { value: 'tools', label: "Tools — we don't have the right technology" },
+      { value: 'time',   label: () => state.userType === 'individual' ? "Time — I'm already at capacity"          : "Time — we're already at capacity" },
+      { value: 'skills', label: () => state.userType === 'individual' ? "Skills — I don't have the expertise yet"  : "Skills — we don't have the expertise yet" },
+      { value: 'tools',  label: () => state.userType === 'individual' ? "Tools — I don't have the right technology" : "Tools — we don't have the right technology" },
       { value: 'budget', label: "Budget — it's not been prioritized" },
-      { value: 'all', label: "All of the above, honestly" },
+      { value: 'all',    label: "All of the above, honestly" },
     ]
   },
   {
@@ -1418,6 +1420,47 @@ const WISHLIST_QUESTIONS = [
       { value: 'yes_check', label: "Probably, but I'd need to think through the specifics", flag: { type: 'warn', text: "Worth mapping out before you build. Data agreements often have implications for what AI tools you can legally use." } },
       { value: 'informal', label: "Not formally, but we'd treat it as confidential" },
       { value: 'none', label: "No restrictions anticipated" },
+    ]
+  },
+];
+
+const AI_QUESTIONS_INDIVIDUAL = [
+  {
+    id: 'ai_tools_indiv',
+    label: 'Which AI tools do you currently use for work?',
+    sub: 'Select all that apply.',
+    type: 'multi',
+    options: [
+      { value: 'chatgpt',     label: 'ChatGPT (OpenAI)' },
+      { value: 'claude',      label: 'Claude (Anthropic)' },
+      { value: 'gemini',      label: 'Gemini (Google)' },
+      { value: 'copilot',     label: 'Copilot (Microsoft)' },
+      { value: 'specialized', label: 'Specialized research tools', note: 'Otter.ai, Speak, Dovetail, Qualtrics AI, etc.' },
+      { value: 'none',        label: 'None yet' },
+    ]
+  },
+  {
+    id: 'ai_proficiency',
+    label: 'How well do you know the tools you use?',
+    sub: "Be honest — this shapes how we pitch the training.",
+    type: 'single',
+    options: [
+      { value: 'beginner',     label: 'Just getting started',           note: "I've tried them but I'm still figuring out what they can do" },
+      { value: 'intermediate', label: 'Comfortable but inconsistent',   note: 'I use them regularly but my results vary a lot' },
+      { value: 'advanced',     label: 'Solid foundation',               note: "I get good results but I know I'm not using them to their full potential", flag: { type: 'good', text: "A solid foundation means we can skip basics and go straight to building real workflows." } },
+      { value: 'power_user',   label: 'Power user',                     note: "I know these tools well — I want to learn what I don't know I don't know", flag: { type: 'good', text: "Power users often get the most out of training because they can immediately apply what they learn." } },
+    ]
+  },
+  {
+    id: 'ai_appetite',
+    label: 'How much do you want to learn new tools or approaches?',
+    sub: 'This helps us pitch the training at the right level.',
+    type: 'single',
+    options: [
+      { value: 'maximize_existing', label: 'Get more out of what I already use',          note: "Depth over breadth — I don't need more tools, I need to use mine better" },
+      { value: 'open_new',          label: 'Open to new tools if they solve a real problem', note: "Practical — show me the value first" },
+      { value: 'eager_new',         label: "I want to explore what's possible",             note: "I'm actively looking for new capabilities to add to my practice" },
+      { value: 'overwhelmed',       label: 'Honestly, a bit overwhelmed by all of it',      note: 'Help me cut through the noise', flag: { type: 'info', text: "A lot of experienced practitioners feel this way. Training works best when it starts with one concrete use case, not a tour of everything." } },
     ]
   },
 ];
@@ -1556,7 +1599,7 @@ function updateProgress() {
     segProgress   = 1;
   } else if (screen === 'existing') {
     currentSegIdx = state.currentWorkflow - 1;
-    segProgress   = state.existingStep / EXISTING_QUESTIONS.length;
+    segProgress   = state.existingStep / getExistingQuestions().length;
   } else if (screen === 'wishlist') {
     currentSegIdx = state.currentWorkflow - 1;
     segProgress   = state.wishlistStep / WISHLIST_QUESTIONS.length;
@@ -1567,10 +1610,10 @@ function updateProgress() {
 
   // Overall % — denominator = actual segments user has committed to
   // = completed workflows * avg questions + current in-progress + ai steps
-  const avgWfQ   = (EXISTING_QUESTIONS.length + WISHLIST_QUESTIONS.length) / 2;
+  const avgWfQ   = (getExistingQuestions().length + WISHLIST_QUESTIONS.length) / 2;
   const maxQ     = (wfSegCount * avgWfQ) + getAIQuestions().length;
   const doneWfQ  = state.workflows.reduce((sum, wf) => {
-    return sum + (wf.branch === 'existing' ? EXISTING_QUESTIONS.length : WISHLIST_QUESTIONS.length);
+    return sum + (wf.branch === 'existing' ? getExistingQuestions().length : WISHLIST_QUESTIONS.length);
   }, 0);
   const curQ     = isDone
     ? maxQ
@@ -1620,11 +1663,15 @@ function selectUserType(type) {
   document.getElementById('btnStart').disabled = false;
 }
 
-function getAIQuestions() {
-  // Solo users skip the team governance question — it's not meaningful without a team
+function getExistingQuestions() {
+  // Solo users skip team-only questions
   return state.userType === 'individual'
-    ? AI_QUESTIONS.filter(q => q.id !== 'ai_governance')
-    : AI_QUESTIONS;
+    ? EXISTING_QUESTIONS.filter(q => !['team_ownership', 'team_sentiment'].includes(q.id))
+    : EXISTING_QUESTIONS;
+}
+
+function getAIQuestions() {
+  return state.userType === 'individual' ? AI_QUESTIONS_INDIVIDUAL : AI_QUESTIONS;
 }
 
 function startDiagnostic() {
@@ -1727,7 +1774,7 @@ function renderQuestion(q, answers, onAnswer, containerEl) {
 
   const label = document.createElement('div');
   label.className = 'q-label';
-  label.textContent = q.label;
+  label.textContent = typeof q.label === 'function' ? q.label() : q.label;
   if (q.optional) {
     const opt = document.createElement('span');
     opt.className = 'q-optional';
@@ -1750,7 +1797,9 @@ function renderQuestion(q, answers, onAnswer, containerEl) {
     q.options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'option' + (answers[q.id] === opt.value ? ' selected' : '');
-      btn.innerHTML = `<div class="opt-radio"></div><div><div class="opt-text">${opt.label}</div>${opt.note ? `<div class="opt-note">${opt.note}</div>` : ''}</div>`;
+      const optLabel = typeof opt.label === 'function' ? opt.label() : opt.label;
+      const optNote  = typeof opt.note  === 'function' ? opt.note()  : opt.note;
+      btn.innerHTML = `<div class="opt-radio"></div><div><div class="opt-text">${optLabel}</div>${optNote ? `<div class="opt-note">${optNote}</div>` : ''}</div>`;
       btn.onclick = () => {
         opts.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
         btn.classList.add('selected');
@@ -1792,7 +1841,9 @@ function renderQuestion(q, answers, onAnswer, containerEl) {
       const chip = document.createElement('button');
       const isSelected = answers[q.id].includes(opt.value);
       chip.className = 'chip' + (isSelected ? ' selected' : '');
-      chip.innerHTML = `<span class="chip-check">✓</span>${opt.label}${opt.note ? ` <span style="opacity:.65;font-size:.76rem">(${opt.note})</span>` : ''}`;
+      const chipLabel = typeof opt.label === 'function' ? opt.label() : opt.label;
+      const chipNote  = typeof opt.note  === 'function' ? opt.note()  : opt.note;
+      chip.innerHTML = `<span class="chip-check">✓</span>${chipLabel}${chipNote ? ` <span style="opacity:.65;font-size:.76rem">(${chipNote})</span>` : ''}`;
       chip.onclick = () => {
         chip.classList.toggle('selected');
         if (chip.classList.contains('selected')) {
@@ -1834,7 +1885,8 @@ function renderExistingStep() {
   const body = document.getElementById('existingBody');
   body.innerHTML = '';
 
-  const q = EXISTING_QUESTIONS[state.existingStep];
+  const questions = getExistingQuestions();
+  const q = questions[state.existingStep];
   const wfBadge = document.createElement('div');
   wfBadge.className = 'wf-badge';
   wfBadge.innerHTML = `<div class="wf-badge-num">${state.currentWorkflow}</div><div class="wf-badge-label">${state.currentWfName}</div>`;
@@ -1847,19 +1899,20 @@ function renderExistingStep() {
   nav.innerHTML = `
     <button class="btn btn-ghost" onclick="existingBack()">← Back</button>
     <button class="btn btn-primary" onclick="existingNext()">
-      ${state.existingStep < EXISTING_QUESTIONS.length - 1 ? 'Continue →' : 'Complete this workflow →'}
+      ${state.existingStep < questions.length - 1 ? 'Continue →' : 'Complete this workflow →'}
     </button>`;
   body.appendChild(nav);
   updateProgress();
 }
 
 function existingNext() {
-  const q = EXISTING_QUESTIONS[state.existingStep];
+  const questions = getExistingQuestions();
+  const q = questions[state.existingStep];
   // Validation: require answer unless optional
   if (!q.optional && q.type !== 'multi') {
     if (!state.existingAnswers[q.id]) { shake(); return; }
   }
-  if (state.existingStep < EXISTING_QUESTIONS.length - 1) {
+  if (state.existingStep < questions.length - 1) {
     state.existingStep++;
     renderExistingStep();
   } else {
@@ -2233,6 +2286,26 @@ const T = {
     create: 'No — the input would need to be created or collected first',
     unsure: 'Unsure',
   },
+  ai_tools_indiv: {
+    chatgpt:     'ChatGPT (OpenAI)',
+    claude:      'Claude (Anthropic)',
+    gemini:      'Gemini (Google)',
+    copilot:     'Copilot (Microsoft)',
+    specialized: 'specialized research tools (Otter.ai, Speak, Dovetail, Qualtrics AI, etc.)',
+    none:        'none yet',
+  },
+  ai_proficiency: {
+    beginner:     'just getting started — still figuring out what tools can do',
+    intermediate: 'comfortable but inconsistent — results vary',
+    advanced:     'solid foundation — gets good results, knows there is more to learn',
+    power_user:   'power user — wants to discover unknown unknowns',
+  },
+  ai_appetite: {
+    maximize_existing: 'wants to get more out of existing tools (depth over breadth)',
+    open_new:          'open to new tools if they solve a real problem',
+    eager_new:         'actively exploring new capabilities',
+    overwhelmed:       'overwhelmed by options — wants help cutting through noise',
+  },
   ai_tools: {
     chatgpt: 'ChatGPT (OpenAI)',
     claude: 'Claude (Anthropic)',
@@ -2316,11 +2389,17 @@ function assembleUserMessage() {
     msg += `\n`;
   });
 
-  msg += `--- AI TOOLS AND TEAM READINESS ---\n`;
-  msg += `Tools currently in use: ${tr(T.ai_tools, state.aiAnswers.ai_tools)}\n`;
-  msg += `Licensing situation: ${tr(T.ai_tier, state.aiAnswers.ai_tier)}\n`;
-  msg += `Shared standard or governance: ${tr(T.ai_governance, state.aiAnswers.ai_governance)}\n`;
-  msg += `Training background: ${tr(T.ai_training, state.aiAnswers.ai_training)}\n\n`;
+  msg += `--- AI TOOLS AND READINESS ---\n`;
+  if (state.userType === 'individual') {
+    msg += `Tools in use: ${tr(T.ai_tools_indiv, state.aiAnswers.ai_tools_indiv)}\n`;
+    msg += `Self-assessed proficiency: ${tr(T.ai_proficiency, state.aiAnswers.ai_proficiency)}\n`;
+    msg += `Appetite for learning: ${tr(T.ai_appetite, state.aiAnswers.ai_appetite)}\n\n`;
+  } else {
+    msg += `Tools currently in use: ${tr(T.ai_tools, state.aiAnswers.ai_tools)}\n`;
+    msg += `Licensing situation: ${tr(T.ai_tier, state.aiAnswers.ai_tier)}\n`;
+    msg += `Shared standard or governance: ${tr(T.ai_governance, state.aiAnswers.ai_governance)}\n`;
+    msg += `Training background: ${tr(T.ai_training, state.aiAnswers.ai_training)}\n\n`;
+  }
   msg += `--- CONTEXT ---\n`;
   msg += `Answering as: ${state.userType === 'individual' ? 'individual / solopreneur' : 'team or agency'}\n`;
   msg += `Number of workflows submitted: ${state.workflows.length}\n`;
