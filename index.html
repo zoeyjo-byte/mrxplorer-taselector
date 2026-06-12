@@ -1141,7 +1141,8 @@ function logSession(lastQuestion) {
 // QUESTION DEFINITIONS
 // ══════════════════════════════════════════════════════
 
-const EXISTING_QUESTIONS = [
+// ── BRANCH A: INDIVIDUAL / SOLOPRENEUR ──────────────────────
+const QUESTIONS_INDIVIDUAL_EXISTING = [
   {
     id: 'frequency',
     label: 'How often does this workflow happen?',
@@ -1158,6 +1159,265 @@ const EXISTING_QUESTIONS = [
   {
     id: 'volume',
     label: 'When it happens, roughly how many items are you processing?',
+    sub: () => getVolumeSubCopy(state.existingAnswers['work_type'] || []),
+    type: 'single',
+    options: [
+      { value: 'under25', label: 'Under 25' },
+      { value: '25_100', label: '25 to 100' },
+      { value: '100_500', label: '100 to 500' },
+      { value: '500plus', label: '500+', note: "High volume doesn't disqualify automation — it defines the approach." },
+    ]
+  },
+  {
+    id: 'input_type',
+    label: 'What kind of input does this workflow start with?',
+    sub: 'Select all that apply.',
+    type: 'multi',
+    options: [
+      { value: 'structured', label: 'Structured data', note: 'Crosstabs, spreadsheets, databases' },
+      { value: 'unstructured', label: 'Unstructured text', note: 'Open-ends, transcripts, reports, emails' },
+      { value: 'existing_content', label: 'Existing written content', note: 'Past proposals, case studies, articles, website copy' },
+      { value: 'company_info', label: 'Company or organizational information', note: 'Credentials, bios, service descriptions, past work samples' },
+      { value: 'client_info', label: 'Client or prospect information', note: 'RFPs, briefs, LinkedIn profiles, websites' },
+      { value: 'av', label: 'Audio or video recordings' },
+      { value: 'visual', label: 'Visual materials', note: 'Slides, images, stimulus' },
+      { value: 'briefs', label: 'Client briefs or specs that vary every time' },
+      { value: 'internal_docs', label: 'Internal business documents', note: 'Meeting notes, financials, CRM data, email threads' },
+      { value: 'ideas_notes', label: 'Raw ideas or notes', note: 'Rough thinking that needs shaping into a deliverable' },
+      { value: 'scratch', label: 'Something I build from scratch each time' },
+    ]
+  },
+  {
+    id: 'input_consistency',
+    label: 'Does the input look roughly the same every time, or does it change project to project?',
+    sub: 'This affects how much maintenance an automated version will need.',
+    type: 'single',
+    options: [
+      { value: 'consistent', label: 'Pretty consistent — same structure, same format', flag: { type: 'good', text: 'Consistent inputs are the foundation of reliable automation. This is a good sign.' } },
+      { value: 'varies_predictable', label: 'It varies, but within a predictable range' },
+      { value: 'different', label: "It's different almost every time — depends on the client", flag: { type: 'warn', text: "Variable inputs aren't a dealbreaker, but they raise maintenance costs. An automated version will need more human oversight to stay accurate." } },
+    ]
+  },
+  {
+    id: 'work_type',
+    label: 'What is the work actually doing to that input?',
+    sub: 'Select all that apply.',
+    type: 'multi',
+    options: [
+      { value: 'reorganizing', label: 'Reorganizing or restructuring it' },
+      { value: 'summarizing', label: 'Summarizing or condensing it' },
+      { value: 'translating', label: 'Translating it', note: 'Language or format — e.g. data into narrative' },
+      { value: 'tagging', label: 'Tagging, coding, or categorizing it' },
+      { value: 'checking', label: 'Checking it for errors or consistency' },
+      { value: 'generating', label: 'Generating something new from it', note: 'Slides, reports, charts' },
+      { value: 'patterns', label: 'Finding patterns across a large volume of it' },
+      { value: 'comparing', label: 'Comparing it against a standard or benchmark' },
+      { value: 'marketing_content', label: 'Creating marketing or social content', note: 'Blog posts, LinkedIn, newsletters, case studies' },
+      { value: 'concepts', label: 'Generating concepts, stimuli, or ideas for testing', note: 'Ad concepts, product concepts, creative territories' },
+      { value: 'admin', label: 'Business administrative tasks', note: 'Bookkeeping, meeting notes, follow-ups, scheduling' },
+    ]
+  },
+  {
+    id: 'judgment_call',
+    label: "Somewhere in this workflow, is there a moment where you make a call that isn't written down anywhere?",
+    sub: 'For example: deciding whether an open-end is "negative" or just "neutral but frustrated." Knowing that this client always wants verbatims even when the brief doesn\'t say so. Recognizing a crosstab looks wrong because the base sizes are off in a non-obvious way.',
+    type: 'single',
+    options: [
+      { value: 'yes', label: "Yes — there's definitely a judgment call embedded in here", flag: { type: 'warn', text: "This is important and often missed. That judgment call is where the human checkpoint needs to live in the automated version. We'll want to name it." } },
+      { value: 'maybe', label: "Maybe — I'd have to think about where exactly" },
+      { value: 'no', label: "Not really — it's pretty mechanical once I know the steps", flag: { type: 'good', text: 'Mechanical workflows with no hidden judgment calls are prime automation candidates.' } },
+    ],
+    followup: {
+      condition: (ans) => ans === 'yes' || ans === 'maybe',
+      id: 'judgment_desc',
+      label: 'Describe it briefly if you can.',
+      sub: "Even a rough description helps design the right checkpoint. This is optional but genuinely useful.",
+      type: 'textarea',
+      optional: true,
+    }
+  },
+  {
+    id: 'error_consequence',
+    label: "If the AI output had a subtle error in it — not an obvious one, a plausible-looking one — how bad would the damage be?",
+    sub: "High stakes doesn't disqualify automation. It defines the QC architecture.",
+    type: 'single',
+    options: [
+      { value: 'low', label: 'Low stakes', note: "I'd catch it in review before it went anywhere", flag: { type: 'good', text: 'Easy to catch errors = lower-risk automation. A good starting point.' } },
+      { value: 'medium', label: 'Medium stakes', note: "It might make it into a draft but I'd catch it before client delivery" },
+      { value: 'high', label: 'High stakes', note: 'This output goes directly to a client or downstream system with minimal review', flag: { type: 'warn', text: "High-stakes output needs a QC checkpoint built into the workflow before anything goes to a client. That's the conversation, not a reason to avoid automating." } },
+      { value: 'catastrophic', label: 'Catastrophic', note: 'An error here could affect a client relationship, a published finding, or a regulatory submission', flag: { type: 'warn', text: "This workflow needs a staged approach with explicit human sign-off at key points. Still automatable — just architected carefully." } },
+    ]
+  },
+  {
+    id: 'data_sensitivity',
+    label: 'What is in this data?',
+    sub: "Be honest — this shapes what environments are safe to use.",
+    type: 'single',
+    options: [
+      { value: 'anonymized', label: 'Already anonymized — no names, no identifying information' },
+      { value: 'client_info', label: 'Client company information but no individual PII' },
+      { value: 'participant_pii', label: 'Individual participant data', note: 'Names, verbatims tied to people, demographics' },
+      { value: 'sensitive_pii', label: 'Sensitive participant data', note: 'Health, financial, political, or other protected categories', flag: { type: 'warn', text: "Sensitive PII requires enterprise-grade AI environments with zero data-training defaults. Free or standard consumer tools are not appropriate here." } },
+    ]
+  },
+  {
+    id: 'nda',
+    label: 'Is this data covered by an NDA, data processing agreement, or client confidentiality clause?',
+    type: 'single',
+    options: [
+      { value: 'yes_know', label: 'Yes, and I know exactly what it says' },
+      { value: 'yes_check', label: "Yes, but I'd have to check the specifics", flag: { type: 'warn', text: "Worth checking before you build any workflow around this data. The specifics matter — especially around data processing and third-party tools." } },
+      { value: 'informal', label: "Not formally, but I treat it as confidential" },
+      { value: 'none', label: "No restrictions I'm aware of" },
+    ]
+  },
+];
+
+const QUESTIONS_INDIVIDUAL_WISHLIST = [
+  {
+    id: 'wl_unlock',
+    label: 'What would doing this unlock for your practice?',
+    sub: "Think about the outcome, not the process — what becomes possible that isn't possible now?",
+    type: 'textarea',
+  },
+  {
+    id: 'wl_blocker',
+    label: "What's stopped you from doing this so far?",
+    sub: 'Select all that apply.',
+    type: 'multi',
+    options: [
+      { value: 'time',   label: "Time — I'm already at capacity" },
+      { value: 'skills', label: "Skills — I don't have the expertise yet" },
+      { value: 'tools',  label: "Tools — I don't have the right technology" },
+      { value: 'budget', label: "Budget — it hasn't been prioritized" },
+      { value: 'all',    label: "All of the above, honestly" },
+    ]
+  },
+  {
+    id: 'wl_input_type',
+    label: 'What kind of input would this workflow start with?',
+    sub: "Select all that apply — even if you don't have this input yet.",
+    type: 'multi',
+    options: [
+      { value: 'structured', label: 'Structured data', note: 'Crosstabs, spreadsheets, databases' },
+      { value: 'unstructured', label: 'Unstructured text', note: 'Open-ends, transcripts, reports, emails' },
+      { value: 'existing_content', label: 'Existing written content', note: 'Past proposals, case studies, articles, website copy' },
+      { value: 'company_info', label: 'Company or organizational information', note: 'Credentials, bios, service descriptions, past work samples' },
+      { value: 'client_info', label: 'Client or prospect information', note: 'RFPs, briefs, LinkedIn profiles, websites' },
+      { value: 'av', label: 'Audio or video recordings' },
+      { value: 'visual', label: 'Visual materials', note: 'Slides, images, stimulus' },
+      { value: 'briefs', label: 'Client briefs or specs' },
+      { value: 'internal_docs', label: 'Internal business documents', note: 'Meeting notes, financials, CRM data, email threads' },
+      { value: 'ideas_notes', label: 'Raw ideas or notes', note: 'Rough thinking that needs shaping into a deliverable' },
+      { value: 'scratch', label: "I'd need to create the inputs from scratch" },
+    ]
+  },
+  {
+    id: 'wl_input_exists',
+    label: 'Does that input exist already, or would you need to create it?',
+    type: 'single',
+    options: [
+      { value: 'exists', label: "It exists — I just don't process it yet", flag: { type: 'good', text: "The input already exists — that's a meaningful head start. This is closer to reality than you might think." } },
+      { value: 'partial', label: 'Some exists, some would need to be created', note: "e.g. I have past proposals but would need to build a template or brief", flag: { type: 'good', text: "A partial foundation is still a foundation. We can work with what exists and design the creation process for what doesn't." } },
+      { value: 'create', label: "I'd need to create or collect it first" },
+      { value: 'unsure', label: "Not sure yet" },
+    ]
+  },
+  {
+    id: 'wl_work_type',
+    label: 'What would the work be doing?',
+    sub: 'Select all that apply.',
+    type: 'multi',
+    options: [
+      { value: 'reorganizing', label: 'Reorganizing or restructuring' },
+      { value: 'summarizing', label: 'Summarizing or condensing' },
+      { value: 'translating', label: 'Translating format', note: 'e.g. data into narrative, findings into slides' },
+      { value: 'tagging', label: 'Tagging, coding, or categorizing' },
+      { value: 'checking', label: 'Checking for errors or consistency' },
+      { value: 'generating', label: 'Generating something new', note: 'Slides, reports, templates, libraries' },
+      { value: 'patterns', label: 'Finding patterns across volume' },
+      { value: 'comparing', label: 'Comparing against a standard or benchmark' },
+      { value: 'marketing_content', label: 'Creating marketing or social content', note: 'Blog posts, LinkedIn, newsletters, case studies' },
+      { value: 'concepts', label: 'Generating concepts, stimuli, or ideas for testing', note: 'Ad concepts, product concepts, creative territories' },
+      { value: 'admin', label: 'Business administrative tasks', note: 'Bookkeeping, meeting notes, follow-ups, scheduling' },
+    ]
+  },
+  {
+    id: 'wl_output_use',
+    label: 'What would the output be used for?',
+    sub: 'Optional — but helpful for understanding the downstream value.',
+    type: 'textarea',
+    optional: true,
+  },
+  {
+    id: 'wl_frequency',
+    label: 'How often would you want to run this?',
+    type: 'single',
+    options: [
+      { value: 'multiple_week', label: 'Multiple times a week' },
+      { value: 'weekly', label: 'Weekly' },
+      { value: 'monthly', label: 'Monthly' },
+      { value: 'few_year', label: 'A few times a year' },
+      { value: 'project', label: 'Per project, as needed' },
+    ]
+  },
+  {
+    id: 'wl_volume',
+    label: "Do you have a sense of how many items you'd be working with each time?",
+    subFn: () => getVolumeSubCopy(state.wishlistAnswers['wl_work_type'] || []),
+    sub: "Optional — it's okay if this is hard to estimate for something you haven't built yet.",
+    type: 'single',
+    optional: true,
+    options: [
+      { value: 'under25', label: 'Under 25' },
+      { value: '25_100', label: '25 to 100' },
+      { value: '100_500', label: '100 to 500' },
+      { value: '500plus', label: '500+' },
+      { value: 'no_idea', label: "No idea yet — this is still pretty conceptual" },
+    ]
+  },
+  {
+    id: 'wl_data_sensitivity',
+    label: 'What would be in this data?',
+    type: 'single',
+    options: [
+      { value: 'anonymized', label: 'Anonymized — no names, no identifying information' },
+      { value: 'client_info', label: 'Client company information but no individual PII' },
+      { value: 'participant_pii', label: 'Individual participant data', note: 'Names, verbatims, demographics' },
+      { value: 'sensitive_pii', label: 'Sensitive participant data', note: 'Health, financial, political, or protected categories', flag: { type: 'warn', text: "Sensitive PII requires enterprise-grade AI environments. Worth factoring into the feasibility conversation." } },
+    ]
+  },
+  {
+    id: 'wl_nda',
+    label: 'Would this data be covered by an NDA, data processing agreement, or confidentiality clause?',
+    type: 'single',
+    options: [
+      { value: 'yes_know', label: 'Yes, and I know what that would mean' },
+      { value: 'yes_check', label: "Probably, but I'd need to think through the specifics", flag: { type: 'warn', text: "Worth mapping out before you build. Data agreements often have implications for what AI tools you can legally use." } },
+      { value: 'informal', label: "Not formally, but I'd treat it as confidential" },
+      { value: 'none', label: "No restrictions anticipated" },
+    ]
+  },
+];
+
+// ── BRANCH B: TEAM ───────────────────────────────────────────
+const QUESTIONS_TEAM_EXISTING = [
+  {
+    id: 'frequency',
+    label: 'How often does this workflow happen?',
+    sub: 'Think about a typical month.',
+    type: 'single',
+    options: [
+      { value: 'multiple_week', label: 'Multiple times a week' },
+      { value: 'weekly', label: 'Weekly' },
+      { value: 'monthly', label: 'Monthly' },
+      { value: 'few_year', label: 'A few times a year' },
+      { value: 'project', label: "It's project-dependent — hard to predict" },
+    ]
+  },
+  {
+    id: 'volume',
+    label: 'When it happens, roughly how many items is your team processing?',
     sub: () => getVolumeSubCopy(state.existingAnswers['work_type'] || []),
     type: 'single',
     options: [
@@ -1218,21 +1478,19 @@ const EXISTING_QUESTIONS = [
   },
   {
     id: 'judgment_call',
-    label: () => state.userType === 'individual'
-      ? "Somewhere in this workflow, is there a moment where you make a call that isn't written down anywhere?"
-      : "Somewhere in this workflow, is there a moment where someone makes a call that isn't written down anywhere?",
+    label: "Somewhere in this workflow, is there a moment where someone makes a call that isn't written down anywhere?",
     sub: 'For example: deciding whether an open-end is "negative" or just "neutral but frustrated." Knowing that this client always wants verbatims even when the brief doesn\'t say so. Recognizing a crosstab looks wrong because the base sizes are off in a non-obvious way.',
     type: 'single',
     options: [
       { value: 'yes', label: "Yes — there's definitely a judgment call embedded in here", flag: { type: 'warn', text: "This is important and often missed. That judgment call is where the human checkpoint needs to live in the automated version. We'll want to name it." } },
-      { value: 'maybe', label: "Maybe — I'd have to think about where exactly" },
-      { value: 'no', label: "Not really — it's pretty mechanical once you know the steps", flag: { type: 'good', text: 'Mechanical workflows with no hidden judgment calls are prime automation candidates.' } },
+      { value: 'maybe', label: "Maybe — we'd have to think about where exactly" },
+      { value: 'no', label: "Not really — it's pretty mechanical once someone knows the steps", flag: { type: 'good', text: 'Mechanical workflows with no hidden judgment calls are prime automation candidates.' } },
     ],
     followup: {
       condition: (ans) => ans === 'yes' || ans === 'maybe',
       id: 'judgment_desc',
       label: 'Describe it briefly if you can.',
-      sub: "Even a rough description helps us design the right checkpoint. This is optional but genuinely useful.",
+      sub: "Even a rough description helps design the right checkpoint. This is optional but genuinely useful.",
       type: 'textarea',
       optional: true,
     }
@@ -1243,8 +1501,8 @@ const EXISTING_QUESTIONS = [
     sub: "High stakes doesn't disqualify automation. It defines the QC architecture.",
     type: 'single',
     options: [
-      { value: 'low', label: 'Low stakes', note: () => state.userType === 'individual' ? "I'd catch it in review before it went anywhere" : "Someone on my team would catch it in review before it went anywhere", flag: { type: 'good', text: 'Easy to catch errors = lower-risk automation. A good starting point.' } },
-      { value: 'medium', label: 'Medium stakes', note: () => state.userType === 'individual' ? "It might make it into a draft but I'd catch it before client delivery" : "It might make it into a draft but we'd catch it before client delivery" },
+      { value: 'low', label: 'Low stakes', note: "Someone on the team would catch it in review before it went anywhere", flag: { type: 'good', text: 'Easy to catch errors = lower-risk automation. A good starting point.' } },
+      { value: 'medium', label: 'Medium stakes', note: "It might make it into a draft but we'd catch it before client delivery" },
       { value: 'high', label: 'High stakes', note: 'This output goes directly to a client or downstream system with minimal review', flag: { type: 'warn', text: "High-stakes output needs a QC checkpoint built into the workflow before anything goes to a client. That's the conversation, not a reason to avoid automating." } },
       { value: 'catastrophic', label: 'Catastrophic', note: 'An error here could affect a client relationship, a published finding, or a regulatory submission', flag: { type: 'warn', text: "This workflow needs a staged approach with explicit human sign-off at key points. Still automatable — just architected carefully." } },
     ]
@@ -1266,10 +1524,10 @@ const EXISTING_QUESTIONS = [
     label: 'Is this data covered by an NDA, data processing agreement, or client confidentiality clause?',
     type: 'single',
     options: [
-      { value: 'yes_know', label: 'Yes, and I know exactly what it says' },
-      { value: 'yes_check', label: "Yes, but I'd have to check the specifics", flag: { type: 'warn', text: "Worth checking before you build any workflow around this data. The specifics matter — especially around data processing and third-party tools." } },
+      { value: 'yes_know', label: 'Yes, and we know exactly what it says' },
+      { value: 'yes_check', label: "Yes, but we'd have to check the specifics", flag: { type: 'warn', text: "Worth checking before you build any workflow around this data. The specifics matter — especially around data processing and third-party tools." } },
       { value: 'informal', label: "Not formally, but we treat it as confidential" },
-      { value: 'none', label: "No restrictions I'm aware of" },
+      { value: 'none', label: "No restrictions we're aware of" },
     ]
   },
   {
@@ -1280,12 +1538,12 @@ const EXISTING_QUESTIONS = [
       { value: 'just_me', label: 'Just me' },
       { value: 'small', label: 'A small team of 2–3 people' },
       { value: 'larger', label: 'A larger team or distributed across roles' },
-      { value: 'outsourced', label: 'We outsource it or it\'s done by junior staff' },
+      { value: 'outsourced', label: "We outsource it or it's done by junior staff" },
     ]
   },
   {
     id: 'team_sentiment',
-    label: 'How do you think they\'d feel about AI taking over part of this?',
+    label: "How do you think they'd feel about AI taking over part of this?",
     sub: "Resistance doesn't disqualify a workflow — it just means change management is part of the plan.",
     type: 'single',
     options: [
@@ -1297,30 +1555,30 @@ const EXISTING_QUESTIONS = [
   },
 ];
 
-const WISHLIST_QUESTIONS = [
+const QUESTIONS_TEAM_WISHLIST = [
   {
     id: 'wl_unlock',
     label: 'What would doing this unlock for your business?',
-    sub: 'Think about the outcome, not the process — what becomes possible that isn\'t possible now?',
+    sub: "Think about the outcome, not the process — what becomes possible that isn't possible now?",
     type: 'textarea',
   },
   {
     id: 'wl_blocker',
-    label: "What's stopped you from doing this so far?",
+    label: "What's stopped your team from doing this so far?",
     sub: 'Select all that apply.',
     type: 'multi',
     options: [
-      { value: 'time',   label: () => state.userType === 'individual' ? "Time — I'm already at capacity"          : "Time — we're already at capacity" },
-      { value: 'skills', label: () => state.userType === 'individual' ? "Skills — I don't have the expertise yet"  : "Skills — we don't have the expertise yet" },
-      { value: 'tools',  label: () => state.userType === 'individual' ? "Tools — I don't have the right technology" : "Tools — we don't have the right technology" },
-      { value: 'budget', label: "Budget — it's not been prioritized" },
+      { value: 'time',   label: "Time — we're already at capacity" },
+      { value: 'skills', label: "Skills — we don't have the expertise yet" },
+      { value: 'tools',  label: "Tools — we don't have the right technology" },
+      { value: 'budget', label: "Budget — it hasn't been prioritized" },
       { value: 'all',    label: "All of the above, honestly" },
     ]
   },
   {
     id: 'wl_input_type',
     label: 'What kind of input would this workflow start with?',
-    sub: 'Select all that apply — even if you don\'t have this input yet.',
+    sub: "Select all that apply — even if you don't have this input yet.",
     type: 'multi',
     options: [
       { value: 'structured', label: 'Structured data', note: 'Crosstabs, spreadsheets, databases' },
@@ -1341,7 +1599,7 @@ const WISHLIST_QUESTIONS = [
     label: 'Does that input exist already, or would you need to create it?',
     type: 'single',
     options: [
-      { value: 'exists', label: 'It exists — we just don\'t process it yet', flag: { type: 'good', text: "The input already exists — that's a meaningful head start. This is closer to reality than you might think." } },
+      { value: 'exists', label: "It exists — we just don't process it yet", flag: { type: 'good', text: "The input already exists — that's a meaningful head start. This is closer to reality than you might think." } },
       { value: 'partial', label: 'Some exists, some would need to be created', note: 'e.g. we have past proposals but would need to build a template or brief', flag: { type: 'good', text: "A partial foundation is still a foundation. We can work with what exists and design the creation process for what doesn't." } },
       { value: 'create', label: "We'd need to create or collect it first" },
       { value: 'unsure', label: "Not sure yet" },
@@ -1375,7 +1633,7 @@ const WISHLIST_QUESTIONS = [
   },
   {
     id: 'wl_frequency',
-    label: 'How often would you want to run this?',
+    label: 'How often would your team want to run this?',
     type: 'single',
     options: [
       { value: 'multiple_week', label: 'Multiple times a week' },
@@ -1387,9 +1645,9 @@ const WISHLIST_QUESTIONS = [
   },
   {
     id: 'wl_volume',
-    label: 'Do you have a sense of how many items you\'d be working with each time?',
+    label: "Do you have a sense of how many items you'd be working with each time?",
     subFn: () => getVolumeSubCopy(state.wishlistAnswers['wl_work_type'] || []),
-    sub: 'Optional — it\'s okay if this is hard to estimate for something you haven\'t built yet.',
+    sub: "Optional — it's okay if this is hard to estimate for something you haven't built yet.",
     type: 'single',
     optional: true,
     options: [
@@ -1416,8 +1674,8 @@ const WISHLIST_QUESTIONS = [
     label: 'Would this data be covered by an NDA, data processing agreement, or confidentiality clause?',
     type: 'single',
     options: [
-      { value: 'yes_know', label: 'Yes, and I know what that would mean' },
-      { value: 'yes_check', label: "Probably, but I'd need to think through the specifics", flag: { type: 'warn', text: "Worth mapping out before you build. Data agreements often have implications for what AI tools you can legally use." } },
+      { value: 'yes_know', label: 'Yes, and we know what that would mean' },
+      { value: 'yes_check', label: "Probably, but we'd need to think through the specifics", flag: { type: 'warn', text: "Worth mapping out before you build. Data agreements often have implications for what AI tools you can legally use." } },
       { value: 'informal', label: "Not formally, but we'd treat it as confidential" },
       { value: 'none', label: "No restrictions anticipated" },
     ]
@@ -1599,10 +1857,10 @@ function updateProgress() {
     segProgress   = 1;
   } else if (screen === 'existing') {
     currentSegIdx = state.currentWorkflow - 1;
-    segProgress   = state.existingStep / getExistingQuestions().length;
+    segProgress   = state.existingStep / getWfQuestionLength('existing');
   } else if (screen === 'wishlist') {
     currentSegIdx = state.currentWorkflow - 1;
-    segProgress   = state.wishlistStep / WISHLIST_QUESTIONS.length;
+    segProgress   = state.wishlistStep / getWfQuestionLength('wishlist');
   } else if (screen === 'wf-start') {
     currentSegIdx = state.currentWorkflow - 1;
     segProgress   = 0;
@@ -1610,10 +1868,10 @@ function updateProgress() {
 
   // Overall % — denominator = actual segments user has committed to
   // = completed workflows * avg questions + current in-progress + ai steps
-  const avgWfQ   = (getExistingQuestions().length + WISHLIST_QUESTIONS.length) / 2;
+  const avgWfQ   = (getWfQuestionLength('existing') + getWfQuestionLength('wishlist')) / 2;
   const maxQ     = (wfSegCount * avgWfQ) + getAIQuestions().length;
   const doneWfQ  = state.workflows.reduce((sum, wf) => {
-    return sum + (wf.branch === 'existing' ? getExistingQuestions().length : WISHLIST_QUESTIONS.length);
+    return sum + getWfQuestionLength(wf.branch);
   }, 0);
   const curQ     = isDone
     ? maxQ
@@ -1663,11 +1921,24 @@ function selectUserType(type) {
   document.getElementById('btnStart').disabled = false;
 }
 
-function getExistingQuestions() {
-  // Solo users skip team-only questions
-  return state.userType === 'individual'
-    ? EXISTING_QUESTIONS.filter(q => !['team_ownership', 'team_sentiment'].includes(q.id))
-    : EXISTING_QUESTIONS;
+function getWorkflowQuestions() {
+  const map = {
+    individual_existing: QUESTIONS_INDIVIDUAL_EXISTING,
+    individual_wishlist: QUESTIONS_INDIVIDUAL_WISHLIST,
+    team_existing:       QUESTIONS_TEAM_EXISTING,
+    team_wishlist:       QUESTIONS_TEAM_WISHLIST,
+  };
+  return map[`${state.userType}_${state.currentBranch}`] || QUESTIONS_INDIVIDUAL_EXISTING;
+}
+
+function getWfQuestionLength(branch) {
+  const map = {
+    individual_existing: QUESTIONS_INDIVIDUAL_EXISTING,
+    individual_wishlist: QUESTIONS_INDIVIDUAL_WISHLIST,
+    team_existing:       QUESTIONS_TEAM_EXISTING,
+    team_wishlist:       QUESTIONS_TEAM_WISHLIST,
+  };
+  return (map[`${state.userType}_${branch}`] || QUESTIONS_INDIVIDUAL_EXISTING).length;
 }
 
 function getAIQuestions() {
@@ -1885,7 +2156,7 @@ function renderExistingStep() {
   const body = document.getElementById('existingBody');
   body.innerHTML = '';
 
-  const questions = getExistingQuestions();
+  const questions = getWorkflowQuestions();
   const q = questions[state.existingStep];
   const wfBadge = document.createElement('div');
   wfBadge.className = 'wf-badge';
@@ -1898,15 +2169,13 @@ function renderExistingStep() {
   nav.className = 'nav-row';
   nav.innerHTML = `
     <button class="btn btn-ghost" onclick="existingBack()">← Back</button>
-    <button class="btn btn-primary" onclick="existingNext()">
-      ${state.existingStep < questions.length - 1 ? 'Continue →' : 'Complete this workflow →'}
-    </button>`;
+    <button class="btn btn-primary" onclick="existingNext()">${state.existingStep < questions.length - 1 ? 'Continue →' : 'Complete this workflow →'}</button>`;
   body.appendChild(nav);
   updateProgress();
 }
 
 function existingNext() {
-  const questions = getExistingQuestions();
+  const questions = getWorkflowQuestions();
   const q = questions[state.existingStep];
   // Validation: require answer unless optional
   if (!q.optional && q.type !== 'multi') {
@@ -1938,7 +2207,8 @@ function renderWishlistStep() {
   const body = document.getElementById('wishlistBody');
   body.innerHTML = '';
 
-  const q = WISHLIST_QUESTIONS[state.wishlistStep];
+  const questions = getWorkflowQuestions();
+  const q = questions[state.wishlistStep];
   const wfBadge = document.createElement('div');
   wfBadge.className = 'wf-badge';
   wfBadge.innerHTML = `<div class="wf-badge-num">${state.currentWorkflow}</div><div class="wf-badge-label">${state.currentWfName} ✨</div>`;
@@ -1950,19 +2220,18 @@ function renderWishlistStep() {
   nav.className = 'nav-row';
   nav.innerHTML = `
     <button class="btn btn-ghost" onclick="wishlistBack()">← Back</button>
-    <button class="btn btn-primary" onclick="wishlistNext()">
-      ${state.wishlistStep < WISHLIST_QUESTIONS.length - 1 ? 'Continue →' : 'Complete this workflow →'}
-    </button>`;
+    <button class="btn btn-primary" onclick="wishlistNext()">${state.wishlistStep < questions.length - 1 ? 'Continue →' : 'Complete this workflow →'}</button>`;
   body.appendChild(nav);
   updateProgress();
 }
 
 function wishlistNext() {
-  const q = WISHLIST_QUESTIONS[state.wishlistStep];
+  const questions = getWorkflowQuestions();
+  const q = questions[state.wishlistStep];
   if (!q.optional && q.type !== 'multi') {
     if (!state.wishlistAnswers[q.id]) { shake(); return; }
   }
-  if (state.wishlistStep < WISHLIST_QUESTIONS.length - 1) {
+  if (state.wishlistStep < questions.length - 1) {
     state.wishlistStep++;
     renderWishlistStep();
   } else {
@@ -2567,7 +2836,7 @@ function renderVerdicts(data) {
   // Transparency note
   const note = document.createElement('div');
   note.className = 'transparency-note';
-  note.innerHTML = "<strong>About these assessments:</strong> These cards were generated by Claude using Z's diagnostic framework and your answers. Treat them as a strong starting point for your consultation conversation, not a final assessment. The consultation is where the real depth happens.";
+  note.innerHTML = "<strong>About these assessments:</strong> These cards were generated by Claude using Z's diagnostic framework and your answers. Treat this as a guide for how complex each automation would be to build, and how to start approaching it.";
   wrap.appendChild(note);
 
   // Workflow complexity assessment cards
@@ -2623,7 +2892,7 @@ function renderVerdicts(data) {
   submitWrap.className = 'submit-wrap';
   submitWrap.innerHTML = `
     <h3>Ready to book your free training consultation?</h3>
-    <p>Send your assessments to Z and she'll review them before your call — so you arrive ready to start building, not starting from zero.</p>
+    <p>Send your assessments to Z if you want to ask questions about them during your call.</p>
     <div class="submit-fields">
       <input type="text" id="submitName" placeholder="Your name" autocomplete="name">
       <input type="email" id="submitEmail" placeholder="Your email" autocomplete="email">
