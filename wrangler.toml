@@ -1,0 +1,10 @@
+name = "mrxplorer-diagnostic"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Secrets — set these via:
+#   wrangler secret put ANTHROPIC_API_KEY
+#   wrangler secret put GOOGLE_SCRIPT_URL
+#
+# To deploy:
+#   wrangler deploy
