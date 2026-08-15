@@ -653,6 +653,66 @@ textarea.text-input { resize: vertical; min-height: 90px; }
 .tier-staged  { background: var(--amber-lt);  color: var(--amber);  border: 1px solid rgba(180,83,9,.25); }
 .tier-notyet  { background: var(--red-lt);    color: var(--red);    border: 1px solid rgba(190,18,60,.2); }
 
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.risk-low      { background: var(--green-lt);  color: var(--green);  border: 1px solid rgba(14,127,90,.2); }
+.risk-moderate { background: var(--navy-light); color: var(--navy);   border: 1px solid rgba(3,44,100,.18); }
+.risk-elevated { background: var(--amber-lt);  color: var(--amber);  border: 1px solid rgba(180,83,9,.2); }
+.risk-high     { background: var(--red-lt);    color: var(--red);    border: 1px solid rgba(190,18,60,.18); }
+.verdict-access-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.verdict-access-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.verdict-access-reason {
+  font-size: .85rem;
+  color: var(--gray-dk);
+  line-height: 1.5;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.verdict-arch-block {
+  background: var(--gray-lt);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+.verdict-arch-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--gray-mid);
+  margin-bottom: 4px;
+}
+.verdict-arch-rec {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.verdict-arch-rationale {
+  font-size: .84rem;
+  color: var(--gray-dk);
+  line-height: 1.5;
+}
+
 .verdict-body { padding: 20px 22px; }
 .verdict-tier-reason {
   font-size: .88rem;
@@ -1271,6 +1331,43 @@ const QUESTIONS_INDIVIDUAL_EXISTING = [
       { value: 'none', label: "No restrictions I'm aware of" },
     ]
   },
+  {
+    id: 'access_source',
+    label: 'If this workflow were automated, where would it get its inputs?',
+    sub: 'Think about the most realistic version — not the most controlled one.',
+    type: 'single',
+    options: [
+      { value: 'manual_upload', label: 'Manual upload each time', note: "I'd paste or upload the files at the start of each run", flag: { type: 'good', text: 'Manual upload keeps the automation fully in your hands. You control exactly what it sees — nothing more.' } },
+      { value: 'designated_folder', label: 'A designated folder or shared location', note: 'Files are dropped in a specific place the automation reads from' },
+      { value: 'single_application', label: 'A specific application or tool', note: 'A research platform, transcription tool, or specialized app it connects to' },
+      { value: 'org_systems', label: 'Broader organizational systems', note: 'Email, Slack, CRM, Drive, or multiple connected platforms', flag: { type: 'warn', text: "Broad system access isn't a disqualifier, but it means the permission boundaries need to be designed explicitly — not assumed." } },
+    ]
+  },
+  {
+    id: 'agency_level',
+    label: 'Beyond producing output, what would this automation be allowed to do?',
+    sub: 'Select the highest level of action it would take.',
+    type: 'single',
+    options: [
+      { value: 'draft_only', label: 'Draft only', note: 'It produces text or files for my review — nothing sent or changed until I approve', flag: { type: 'good', text: 'Draft-only is the most controllable architecture. The human is the last step before anything moves.' } },
+      { value: 'modify_files', label: 'Modify or update existing files or records', note: 'It writes to or overwrites documents I already have' },
+      { value: 'internal_comms', label: 'Send internal communications', note: 'Slack messages, email drafts, or calendar updates sent to team members', flag: { type: 'info', text: 'Internal comms automation can save real time — but the authorization boundary (what triggers a send) needs to be explicit.' } },
+      { value: 'external_comms', label: 'Send external communications', note: 'Emails or messages that go to clients or outside my organization', flag: { type: 'warn', text: "External-facing action is where errors travel farthest. Human authorization before anything goes outside is worth building into the architecture." } },
+      { value: 'system_actions', label: 'Take direct system actions', note: 'Update a CRM, trigger a downstream process, initiate a transaction', flag: { type: 'warn', text: "System-level actions need explicit authorization architecture — not just at the design stage, but at runtime for each consequential action." } },
+    ]
+  },
+  {
+    id: 'reversibility',
+    label: 'If something went wrong with the output, how easy would it be to undo?',
+    sub: 'Think about the most realistic failure mode for this specific workflow.',
+    type: 'single',
+    options: [
+      { value: 'easy', label: "Easy — it's a draft that hasn't been shared anywhere yet", flag: { type: 'good', text: 'High reversibility is a meaningful safety buffer. Errors in draft-stage output are recoverable by design.' } },
+      { value: 'moderate', label: 'Takes some effort — cleanup across a few places', note: 'But fully recoverable' },
+      { value: 'difficult', label: 'Difficult — something would already have been sent or published', flag: { type: 'warn', text: "Once something is sent, recovery depends on the other side. A mandatory human checkpoint before delivery is the right design response." } },
+      { value: 'irreversible', label: 'Effectively irreversible — data could be exposed or an external action completed', flag: { type: 'warn', text: "Effectively irreversible consequences require the strictest authorization architecture: explicit human sign-off at every point that can't be walked back." } },
+    ]
+  },
 ];
 
 const QUESTIONS_INDIVIDUAL_WISHLIST = [
@@ -1396,6 +1493,31 @@ const QUESTIONS_INDIVIDUAL_WISHLIST = [
       { value: 'yes_check', label: "Probably, but I'd need to think through the specifics", flag: { type: 'warn', text: "Worth mapping out before you build. Data agreements often have implications for what AI tools you can legally use." } },
       { value: 'informal', label: "Not formally, but I'd treat it as confidential" },
       { value: 'none', label: "No restrictions anticipated" },
+    ]
+  },
+  {
+    id: 'wl_access_source',
+    label: 'Where would this automation get its inputs?',
+    sub: 'Think about the most realistic design — not the most controlled one.',
+    type: 'single',
+    options: [
+      { value: 'manual_upload', label: "Manual upload — I'd provide the files at the start of each run", flag: { type: 'good', text: 'Manual upload is the lowest-risk starting point and usually the right first architecture.' } },
+      { value: 'designated_folder', label: 'A designated folder or shared location' },
+      { value: 'single_application', label: 'A specific application or tool it would connect to' },
+      { value: 'org_systems', label: 'Broader organizational systems — email, CRM, Drive, or multiple platforms', flag: { type: 'warn', text: "Worth designing the permission boundaries carefully before connecting to multiple systems. More access means more exposure." } },
+    ]
+  },
+  {
+    id: 'wl_agency_level',
+    label: 'What would you want this automation to be able to do on its own?',
+    sub: "Select the highest level of action you're envisioning.",
+    type: 'single',
+    options: [
+      { value: 'draft_only', label: "Produce drafts for my review — nothing sent without me approving it first", flag: { type: 'good', text: "Draft-only is usually the right architecture for a first build, regardless of where you eventually want to go." } },
+      { value: 'modify_files', label: 'Modify or update existing files or records' },
+      { value: 'internal_comms', label: 'Send internal communications — Slack, email drafts, calendar updates to the team' },
+      { value: 'external_comms', label: 'Send communications directly to clients or outside my organization', flag: { type: 'warn', text: "External-facing autonomy requires more architecture than most first builds are ready for. Worth flagging in the design phase." } },
+      { value: 'system_actions', label: 'Take direct system actions — update a CRM, trigger downstream processes', flag: { type: 'warn', text: "High-agency automation can be built responsibly, but explicit authorization steps are required. This should be a later phase, not a starting point." } },
     ]
   },
 ];
@@ -1553,6 +1675,43 @@ const QUESTIONS_TEAM_EXISTING = [
       { value: 'resistant', label: "Resistant — there would be real pushback", flag: { type: 'warn', text: "Noted. This doesn't stop automation — it means the training engagement needs to include change management strategy, not just tooling." } },
     ]
   },
+  {
+    id: 'access_source',
+    label: 'If this workflow were automated, where would it get its inputs?',
+    sub: 'Think about the most realistic version — not the most controlled one.',
+    type: 'single',
+    options: [
+      { value: 'manual_upload', label: 'Manual upload each time', note: "Someone on the team would paste or upload the files at the start of each run", flag: { type: 'good', text: "Manual upload keeps the automation fully in your team's hands. You control exactly what it sees — nothing more." } },
+      { value: 'designated_folder', label: 'A designated folder or shared location', note: 'Files are dropped in a specific place the automation reads from' },
+      { value: 'single_application', label: 'A specific application or tool', note: 'A research platform, transcription tool, or specialized app it connects to' },
+      { value: 'org_systems', label: 'Broader organizational systems', note: 'Email, Slack, CRM, Drive, or multiple connected platforms', flag: { type: 'warn', text: "Broad system access isn't a disqualifier, but it means the permission boundaries need to be designed explicitly — especially in a team environment where multiple people may be triggering runs." } },
+    ]
+  },
+  {
+    id: 'agency_level',
+    label: 'Beyond producing output, what would this automation be allowed to do?',
+    sub: 'Select the highest level of action it would take.',
+    type: 'single',
+    options: [
+      { value: 'draft_only', label: 'Draft only', note: 'It produces text or files for team review — nothing sent or changed until someone approves', flag: { type: 'good', text: "Draft-only is the most controllable architecture. A human is always the last step before anything moves." } },
+      { value: 'modify_files', label: 'Modify or update existing files or records', note: 'It writes to or overwrites documents the team already has' },
+      { value: 'internal_comms', label: 'Send internal communications', note: 'Slack messages, email drafts, or calendar updates sent to team members', flag: { type: 'info', text: 'Internal comms automation can save real time — but the authorization boundary (what triggers a send) needs to be explicit, especially across a team.' } },
+      { value: 'external_comms', label: 'Send external communications', note: 'Emails or messages that go to clients or outside the organization', flag: { type: 'warn', text: "External-facing action is where errors travel farthest. Human authorization before anything goes outside should be a required design constraint." } },
+      { value: 'system_actions', label: 'Take direct system actions', note: 'Update a CRM, trigger a downstream process, initiate a transaction', flag: { type: 'warn', text: "System-level actions need explicit authorization architecture — not just at the design stage, but at runtime for each consequential action." } },
+    ]
+  },
+  {
+    id: 'reversibility',
+    label: 'If something went wrong with the output, how easy would it be to undo?',
+    sub: 'Think about the most realistic failure mode for this specific workflow.',
+    type: 'single',
+    options: [
+      { value: 'easy', label: "Easy — it's a draft that hasn't been shared anywhere yet", flag: { type: 'good', text: 'High reversibility is a meaningful safety buffer. Errors in draft-stage output are recoverable by design.' } },
+      { value: 'moderate', label: 'Takes some effort — cleanup across a few places', note: 'But fully recoverable' },
+      { value: 'difficult', label: 'Difficult — something would already have been sent or published', flag: { type: 'warn', text: "Once something is sent, recovery depends on the other side. A mandatory human checkpoint before delivery is the right design response." } },
+      { value: 'irreversible', label: 'Effectively irreversible — data could be exposed or an external action completed', flag: { type: 'warn', text: "Effectively irreversible consequences require the strictest authorization architecture: explicit human sign-off at every point that can't be walked back." } },
+    ]
+  },
 ];
 
 const QUESTIONS_TEAM_WISHLIST = [
@@ -1678,6 +1837,31 @@ const QUESTIONS_TEAM_WISHLIST = [
       { value: 'yes_check', label: "Probably, but we'd need to think through the specifics", flag: { type: 'warn', text: "Worth mapping out before you build. Data agreements often have implications for what AI tools you can legally use." } },
       { value: 'informal', label: "Not formally, but we'd treat it as confidential" },
       { value: 'none', label: "No restrictions anticipated" },
+    ]
+  },
+  {
+    id: 'wl_access_source',
+    label: 'Where would this automation get its inputs?',
+    sub: 'Think about the most realistic design — not the most controlled one.',
+    type: 'single',
+    options: [
+      { value: 'manual_upload', label: "Manual upload — someone on the team would provide files at the start of each run", flag: { type: 'good', text: "Manual upload is the lowest-risk starting point and usually the right first architecture for a team build." } },
+      { value: 'designated_folder', label: 'A designated folder or shared location the team drops files into' },
+      { value: 'single_application', label: 'A specific application or tool it would connect to' },
+      { value: 'org_systems', label: 'Broader organizational systems — email, CRM, Drive, or multiple platforms', flag: { type: 'warn', text: "Multi-system access in a team context means more people triggering the automation and more exposure. Worth designing the permission boundaries before connecting." } },
+    ]
+  },
+  {
+    id: 'wl_agency_level',
+    label: 'What would you want this automation to be able to do on its own?',
+    sub: "Select the highest level of action you're envisioning.",
+    type: 'single',
+    options: [
+      { value: 'draft_only', label: "Produce drafts for team review — nothing sent without someone approving it first", flag: { type: 'good', text: "Draft-only is usually the right architecture for a first build, regardless of where you eventually want to go." } },
+      { value: 'modify_files', label: 'Modify or update existing files or records' },
+      { value: 'internal_comms', label: 'Send internal communications — Slack, email drafts, calendar updates to the team' },
+      { value: 'external_comms', label: 'Send communications directly to clients or outside the organization', flag: { type: 'warn', text: "External-facing autonomy requires more architecture than most first builds are ready for, especially in a team context. Worth flagging in the design phase." } },
+      { value: 'system_actions', label: 'Take direct system actions — update a CRM, trigger downstream processes', flag: { type: 'warn', text: "High-agency automation can be built responsibly, but explicit authorization steps are required. This should be a later phase, not a starting point." } },
     ]
   },
 ];
@@ -2606,6 +2790,38 @@ const T = {
     vibes: 'no formal approach — figuring it out as they go',
     none: 'no one is really using AI yet',
   },
+  access_source: {
+    manual_upload: 'manual upload each time — no standing access',
+    designated_folder: 'designated folder or shared location',
+    single_application: 'a specific application or tool',
+    org_systems: 'broader organizational systems (email, Slack, CRM, Drive, or multiple platforms)',
+  },
+  agency_level: {
+    draft_only: 'draft only — produces output for human review, nothing sent automatically',
+    modify_files: 'modifies or updates existing files or records',
+    internal_comms: 'sends internal communications (Slack, email drafts, calendar)',
+    external_comms: 'sends external communications to clients or outside the organization',
+    system_actions: 'takes direct system actions (CRM updates, downstream triggers, transactions)',
+  },
+  reversibility: {
+    easy: 'easy to reverse — draft not yet shared',
+    moderate: 'takes some effort — cleanup across a few places, but fully recoverable',
+    difficult: 'difficult — something would already have been sent or published',
+    irreversible: 'effectively irreversible — data could be exposed or external action completed',
+  },
+  wl_access_source: {
+    manual_upload: 'manual upload each time',
+    designated_folder: 'designated folder or shared location',
+    single_application: 'a specific application or tool',
+    org_systems: 'broader organizational systems (email, CRM, Drive, multiple platforms)',
+  },
+  wl_agency_level: {
+    draft_only: 'produce drafts for human review — nothing sent without approval',
+    modify_files: 'modify or update files or records',
+    internal_comms: 'send internal communications (Slack, email, calendar)',
+    external_comms: 'send external communications to clients',
+    system_actions: 'direct system actions (CRM updates, downstream triggers)',
+  },
 };
 
 function tr(map, val) {
@@ -2643,6 +2859,9 @@ function assembleUserMessage() {
       msg += `NDA or confidentiality coverage: ${tr(T.nda, a.nda)}\n`;
       msg += `Who does this work: ${tr(T.team_ownership, a.team_ownership)}\n`;
       msg += `Team sentiment toward AI involvement: ${tr(T.team_sentiment, a.team_sentiment)}\n`;
+      msg += `[ACCESS & AGENCY] Input access model: ${tr(T.access_source, a.access_source)}\n`;
+      msg += `[ACCESS & AGENCY] Agency level: ${tr(T.agency_level, a.agency_level)}\n`;
+      msg += `[ACCESS & AGENCY] Reversibility: ${tr(T.reversibility, a.reversibility)}\n`;
     } else {
       msg += `What this would unlock: ${a.wl_unlock || 'not answered'}\n`;
       msg += `What has stopped them: ${tr(T.wl_blocker, a.wl_blocker)}\n`;
@@ -2654,6 +2873,8 @@ function assembleUserMessage() {
       msg += `Estimated volume: ${tr(T.volume, a.wl_volume)}\n`;
       msg += `Data sensitivity: ${tr(T.data_sensitivity, a.wl_data_sensitivity)}\n`;
       msg += `NDA or confidentiality coverage: ${tr(T.wl_nda, a.wl_nda)}\n`;
+      msg += `[ACCESS & AGENCY] Intended input access model: ${tr(T.wl_access_source, a.wl_access_source)}\n`;
+      msg += `[ACCESS & AGENCY] Intended agency level: ${tr(T.wl_agency_level, a.wl_agency_level)}\n`;
     }
     msg += `\n`;
   });
@@ -2702,7 +2923,29 @@ WHAT TO HAVE READY: Be concrete and specific. This is a checklist of the actual 
 
 WHAT TO CONSIDER: These are the design decisions and human factors they need to think through before building. Focus on: where does a person make a judgment call that is not written down anywhere (and how will the automated version handle it)? How does new input get fed into the workflow each time it runs — manual paste, file upload, a filled-in template? What does a human review step look like before anything goes to a client? Ground every item in what they actually answered. Two to four specific considerations.
 
-WISHLIST WORKFLOWS: Treat identically to existing workflows for complexity assignment. Shift the framing: what inputs would need to exist first, what would the build process look like, what is the realistic path. Complexity level still applies.
+ACCESS AND AGENCY RISK: The diagnostic now captures three dimensions of access and agency risk. Assess these separately from workflow complexity. Assign one of four levels:
+
+"Low": Manual upload access; draft-only output; easy to reverse. The human controls every handoff. No design work needed beyond good prompting.
+
+"Moderate": Designated folder or single-application access; file modifications or internal communications; moderate reversibility. Manageable, but requires documented QC and clear run triggers.
+
+"Elevated": Broader organizational system access (email, CRM, Drive); internal communications automation; difficult-to-reverse output; or persistent connection to a shared location. Requires a defined permission architecture: what exactly can the automation see, who can trigger it, and where does human review happen.
+
+"High": Multi-system access; external-facing communications or direct system actions; effectively irreversible consequences; or persistent credentials to organizational systems. Requires explicit authorization checkpoints at every consequential step — not just at the design stage, but at runtime.
+
+Note: If access/agency answers are missing or unanswered, assign "Moderate" and note that the architecture design is still to be determined.
+
+ARCHITECTURE RECOMMENDATION: Synthesize complexity and access/agency risk into one of four architecture types. This is the single most useful thing the diagnostic can tell them.
+
+"Automate with confidence": Low-to-moderate complexity and low-to-moderate access/agency risk. Build it.
+
+"AI-assisted, human in the loop": Any combination with high judgment, high error consequence, or a named decision point that cannot be automated. The human stays active at specific, named checkpoints.
+
+"Design the access model first": A good automation candidate for the task itself, but the access or agency design needs explicit work before building. The permission architecture comes before the build conversation.
+
+"Design the architecture first": High access/agency risk regardless of task complexity, or high consequences combined with high agency. The authorization design conversation must happen before any build begins — not as part of it.
+
+WISHLIST WORKFLOWS: Treat identically to existing workflows for complexity assignment. Shift the framing: what inputs would need to exist first, what would the build process look like, what is the realistic path. Access and agency risk applies equally.
 
 INDIVIDUAL VS TEAM: The context section will tell you whether this person is answering as an individual/solopreneur or on behalf of a team. For individuals, speak directly to them ("you", not "your team"). For teams, speak to the group. The complexity assessments apply equally to both — adapt the language, not the rigor.
 
@@ -2726,7 +2969,11 @@ RESPOND with valid JSON only. No preamble, no markdown, no explanation outside t
         "Specific consideration 1 — grounded in their answers, not generic",
         "Specific consideration 2",
         "Specific consideration 3"
-      ]
+      ],
+      "access_agency_risk": "Low or Moderate or Elevated or High",
+      "access_agency_reason": "One sentence grounded in their access model, agency level, and reversibility answers. If not answered, say so.",
+      "architecture_recommendation": "Automate with confidence or AI-assisted, human in the loop or Design the access model first or Design the architecture first",
+      "architecture_rationale": "One sentence connecting their complexity level and access/agency risk to the recommended architecture type. Specific to their workflow, not generic."
     }
   ],
   "summary": "Two to three sentences. Names the pattern across their workflows. Connects their work to the branding and voice skills they will build. Written as Z to the person: warm, specific, forward-looking."
@@ -2778,6 +3025,7 @@ async function generateVerdicts() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userMessage }],
       }),
@@ -2829,6 +3077,13 @@ const COMPLEXITY_META = {
   'Not Ready Yet':   { cls: 'tier-notyet', icon: '○', label: 'Not Ready Yet' },
 };
 
+const ACCESS_RISK_META = {
+  'Low':      { cls: 'risk-low',      icon: '✓', label: 'Low access risk' },
+  'Moderate': { cls: 'risk-moderate', icon: '◐', label: 'Moderate access risk' },
+  'Elevated': { cls: 'risk-elevated', icon: '↑', label: 'Elevated access risk' },
+  'High':     { cls: 'risk-high',     icon: '⚠', label: 'High access risk' },
+};
+
 function renderVerdicts(data) {
   const wrap = document.getElementById('verdictsWrap');
   wrap.innerHTML = '';
@@ -2855,6 +3110,22 @@ function renderVerdicts(data) {
       `<div class="verdict-obs-item"><div class="verdict-obs-dot"></div><div>${item}</div></div>`
     ).join('');
 
+    const riskMeta = ACCESS_RISK_META[wf.access_agency_risk] || ACCESS_RISK_META['Moderate'];
+    const accessSectionHTML = wf.access_agency_risk ? `
+      <div class="verdict-access-section">
+        <div class="verdict-access-head">
+          <div class="verdict-obs-label">Access &amp; agency risk</div>
+          <div class="risk-badge ${riskMeta.cls}">${riskMeta.icon} ${riskMeta.label}</div>
+        </div>
+        ${wf.access_agency_reason ? `<div class="verdict-access-reason">${wf.access_agency_reason}</div>` : ''}
+        ${wf.architecture_recommendation ? `
+        <div class="verdict-arch-block">
+          <div class="verdict-arch-label">Architecture recommendation</div>
+          <div class="verdict-arch-rec">${wf.architecture_recommendation}</div>
+          ${wf.architecture_rationale ? `<div class="verdict-arch-rationale">${wf.architecture_rationale}</div>` : ''}
+        </div>` : ''}
+      </div>` : '';
+
     card.innerHTML = `
       <div class="verdict-head">
         <div>
@@ -2873,6 +3144,7 @@ function renderVerdicts(data) {
           <div class="verdict-obs-label">What to consider</div>
           ${considerHTML}
         </div>
+        ${accessSectionHTML}
       </div>`;
     wrap.appendChild(card);
   });
